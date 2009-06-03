@@ -104,26 +104,27 @@ class Coordinates:
 				else:
 					lon = val
 				
-			++i
+			i=i+1
 			
 		return Coordinates(lat,lon,0)
 
 if __name__ == "__main__":
-	c1 = Coordinates.parse_string("Lat = -47° 25\" Nord, Lon = 010° 59' 3 0\" w")
+	c1 = Coordinates.parse_string("Lat = -47° 25\" Nord,Lon = 010° 59' 3 0\" w")
+	c2 = Coordinates.parse_string("Lat = -47° 16` 12'' N, Lon = 10° 20` 30\" w")
+
 	print c1.lat
 	print c1.lon
-	
-	c2 = Coordinates.parse_string("Lat = -47° 16` 12'' N, Lon = 10° 20` 30\" w")
 	print c2.lat
-	print c2.lon
-	
+	print c2.lon	
 	print c1.distance(c2) , "Km"
+	print "------------------"
 	
 	c1 = Coordinates.parse_string("-48.168991,11.5768")
 	c2 = Coordinates.parse_string("-48.167288,11.575706")
 
+	print c1.lat
+	print c1.lon
 	print c2.lat
 	print c2.lon
-
 	print c1.distance(c2)*1000 , "m"
 	
