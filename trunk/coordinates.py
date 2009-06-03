@@ -21,8 +21,8 @@ class Coordinates:
 	
 	@staticmethod
 	def parse_string(co):
-		lat = 0
-		lon = 0
+		lat = 0.0
+		lon = 0.0
 		
 		co = co.lower()
 		s = ""
@@ -45,50 +45,45 @@ class Coordinates:
 				else:
 					lon = float(s)
 			except ValueError:
-				degree = 0
-				minutes = 0
-				seconds = 0
+				degree = 0.0
+				minutes = 0.0
+				seconds = 0.0
 				
 				# remove all leading non digits
-				while not s[0].isdigit():
+				while not s[0].isdigit() and s[0] !="+" and s[0]!="-":
 					s = s[1:]
 				
 				sp = s.partition("°")
 				if(sp[1] != ""):
 					degree = float(sp[0])
 					s = sp[2]
-				else:
-					s = sp[0]
 				
 				sp = s.partition("'")
 				if(sp[1] != ""):
-					minutes = float(sp[0])
-					s = sp[2]
-				else:
-					s = sp[0]
-				
+					if not (len(sp[2]) > 0 and sp[2][0] == "'"):
+						minutes = float(sp[0])
+						s = sp[2]
+					
 				sp = s.partition("′")
 				if(sp[1] != ""):
 					minutes = float(sp[0])
 					s = sp[2]
-				else:
-					s = sp[0]
 				
 				sp = s.partition("`")
 				if(sp[1] != ""):
 					minutes = float(sp[0])
 					s = sp[2]
-				else:
-					s = sp[0]
 				
 				sp = s.partition("\"")
 				if(sp[1] != ""):
 					seconds = float(sp[0])
 					s = sp[2]
-				else:
-					s = sp[0]
-					
-				s = sp[2]
+				
+				sp = s.partition("''")
+				if(sp[1] != ""):
+					seconds = float(sp[0])
+					s = sp[2]
+				
 				if len(s) > 0:
 					s = s[0]
 				else:
@@ -111,13 +106,21 @@ class Coordinates:
 				
 			++i
 			
-			print degree
-			print minutes
-			print seconds
-			print lat
-			print lon
-			
 		return Coordinates(lat,lon,0)
 
 if __name__ == "__main__":
-	print Coordinates.parse_string("Lat = 47° 25\" Nord, Lon = 010° 59' 3 0\" Ost")
+	c1 = Coordinates.parse_string("Lat = -47° 25\" Nord, Lon = 010° 59' 3 0\" w")
+	print c1.lat
+	print c1.lon
+	
+	c2 = Coordinates.parse_string("Lat = -47° 16` 12'' N, Lon = 10° 20` 30\" w")
+	print c2.lat
+	print c2.lon
+	
+	print c1.distance(c2) , "Km"
+	
+	c1 = Coordinates.parse_string("48.168991,11.5768")
+	c2 = Coordinates.parse_string("48.167288,11.575706")
+	
+	print c1.distance(c2)*1000 , "m"
+	
