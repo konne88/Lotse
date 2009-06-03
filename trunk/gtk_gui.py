@@ -5,6 +5,7 @@
 #import hildon
 import gtk
 import gobject
+import coordinates
 
 import gps, os, time, sys
 from math import *  
@@ -25,8 +26,9 @@ class Lotse:
         self.VBoxLeft= gtk.VBox()
         self.VBoxRight = gtk.VBox()
         
+        self.ListTargetCombo = gtk.combo_box_new_text()
         self.CoordEntry = gtk.Entry()
-        self.TargetAddButton = gtk.Button()
+        self.TargetAddButton = gtk.Button("Add Target Coordinates")
         
         
         self.HBox.add(self.VBoxLeft)
@@ -38,17 +40,24 @@ class Lotse:
         self.VBoxLeft.add(self.VelLabel)
         self.VBoxLeft.add(self.HeadLabel)
         
+        self.VBoxRight.add(self.ListTargetCombo)
         self.VBoxRight.add(self.CoordEntry)
         self.VBoxRight.add(self.TargetAddButton)
         
         self.window.add(self.HBox)
         self.session = gps.gps()
         
-        gobject.timeout_add(1000, self.update_widget)
+        gobject.timeout_add(100, self.update_widget)
             
         self.window.connect('destroy', self.window_destroy)
+        self.TargetAddButton.connect('clicked',self.button_clicked)
         self.window.show_all()
 
+    def button_clicked(self, widget, data=None):
+        self.ListTargetCombo.append_text(self.CoordEntry.get_text())
+        self.ListTargetCombo.set_active()
+        
+    
     def window_destroy(self,widget, data=None):
         gtk.main_quit()
 
