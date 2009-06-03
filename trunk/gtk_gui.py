@@ -16,13 +16,35 @@ class Lotse:
         #  self.program  = hildon.Program()
         #  self.window = hildon.Window()
         self.window = gtk.Window()
-        self.infolabel = gtk.Label("")
-        self.window.add(self.infolabel)
+        self.LatLabel = gtk.Label("")
+        self.LonLabel = gtk.Label("")
+        self.AltLabel = gtk.Label("")
+        self.VelLabel = gtk.Label("")
+        self.HeadLabel = gtk.Label("")
+        self.HBox = gtk.HBox()
+        self.VBoxLeft= gtk.VBox()
+        self.VBoxRight = gtk.VBox()
+        
+        self.CoordEntry = gtk.Entry()
+        self.TargetAddButton = gtk.Button()
+        
+        
+        self.HBox.add(self.VBoxLeft)
+        self.HBox.add(self.VBoxRight)
+        
+        self.VBoxLeft.add(self.LatLabel)
+        self.VBoxLeft.add(self.LonLabel)
+        self.VBoxLeft.add(self.AltLabel)
+        self.VBoxLeft.add(self.VelLabel)
+        self.VBoxLeft.add(self.HeadLabel)
+        
+        self.VBoxRight.add(self.CoordEntry)
+        self.VBoxRight.add(self.TargetAddButton)
+        
+        self.window.add(self.HBox)
         self.session = gps.gps()
         
-        gobject.timeout_add(1000,\
-            self.update_widget, \
-            self.session, self.infolabel)
+        gobject.timeout_add(1000, self.update_widget)
             
         self.window.connect('destroy', self.window_destroy)
         self.window.show_all()
@@ -34,20 +56,16 @@ class Lotse:
         gtk.main()
 
 
-    def update_widget(self, session, infolabel):
-        session.query('admosy')
+    def update_widget(self):
+        self.session.query('admosy')
 
-        infostring=''
-        infostring+='Status: '+str(session.status)+'\n'
-        infostring+='Latitude: %.5f'%session.fix.latitude+'\n'
-        infostring+='Longitude: %.5f'%session.fix.longitude+'\n'
-        infostring+='Speed: %.5f'%session.fix.speed+' m/s\n'
-        infostring+='Track: %.5f'%session.fix.track+'\n'
-        infostring+='Altitude: %.0f'%session.fix.altitude+' m\n'
-
-        infostring+='Time (UTC): '+session.utc+'\n'
-
-        infolabel.set_text(infostring)
+       
+        self.LatLabel.set_text('Lat: %.5f °'%self.session.fix.latitude)
+        self.LonLabel.set_text('Lon: %.5f °'%self.session.fix.longitude)
+        self.AltLabel.set_text('Altitude: %.0f m'%self.session.fix.altitude)
+        self.VelLabel.set_text('Speed: %.5f m/s'%self.session.fix.speed)
+        self.HeadLabel.set_text('Heading: %.1f °'%self.session.fix.track) 
+    
         return 1
 
 
