@@ -119,8 +119,11 @@ if __name__ == "__main__":
 	
 	print c1.distance(c2) , "Km"
 	
-	c1 = Coordinates.parse_string("48.168991,11.5768")
-	c2 = Coordinates.parse_string("48.167288,11.575706")
-	
+	c1 = Coordinates.parse_string("-48.168991,11.5768")
+	c2 = Coordinates.parse_string("-48.167288,11.575706")
+
+	print c2.lat
+	print c2.lon
+
 	print c1.distance(c2)*1000 , "m"
 	
