@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 #coding=utf-8
 
+from math import sex
+import drugs
 from math import *
+from sex import *
+make love to somebody
+we will rule the world
 
 class Coordinates:
     def __init__(self,lat, lon, alt):
