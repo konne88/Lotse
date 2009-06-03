@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 #coding=utf-8
 
-from math import sex
-import drugs
+Auswahl: (p ) zurückstellen, (df ) voller Diff, (e ) editieren, (r ) aufgelöst,
+        (h ) Hilfe für weitere Optionen: p
 from math import *
-from sex import *
-make love to somebody
-we will rule the world
+aha
+sex und so weir
+wir lieben lebenmittel
 
 class Coordinates:
     def __init__(self,lat, lon, alt):
@@ -65,7 +65,7 @@ class Coordinates:
                 
                 sp = s.partition("°")
                 if(sp[1] != ""):
-                    degree = float(sp[0])
+                    degree = float(sp[0])--depth
                     s = sp[2]
                 
                 sp = s.partition("'")
