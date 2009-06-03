@@ -20,7 +20,10 @@ class Lotse:
         self.window.add(self.infolabel)
         self.session = gps.gps()
         
-        gobject.timeout_add(100, self.update_widget, self.session, self.infolabel)
+        gobject.timeout_add(1000,\
+            self.update_widget, \
+            self.session, self.infolabel)
+            
         self.window.connect('destroy', self.window_destroy)
         self.window.show_all()
 
