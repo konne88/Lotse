@@ -3,13 +3,13 @@
 
 from math import *
 
-class Coordinates:
+class Coordinates(object):
     def __init__(self,lat, lon, alt):
         self.lat = lat
         self.lon = lon
         self.alt = alt
     
-    def bearing(self,coord):
+    def heading_to(self,coord):
         y = sin(radians(coord.lon-self.lon)) * cos(radians(coord.lat))
         x = cos(radians(self.lat)) * sin(radians(coord.lat)) \
           - sin(radians(self.lat)) * cos(radians(coord.lat)) \
@@ -17,13 +17,30 @@ class Coordinates:
         
         return (degrees(atan2(y, x))+360) % 360
 
-    def distance(self, coord):
+    def distance_to(self, coord):
         R = 6371
         d = acos(sin(radians(self.lat))*sin(radians(coord.lat)) \
           + cos(radians(self.lat))*cos(radians(coord.lat)) \
           * cos(radians(coord.lon-self.lon))) * R;
         return d
     
+    def strlatlon(self):
+        s = ""
+        
+        for v,h,f in ((self.lat,('N','S'),True),(self.lon,('E','W'),False)):
+            degreeF = abs(v)
+            degree = int(degreeF)
+            minutesF = (degreeF - degree)*60
+            minutes = int(minutesF)
+            secondsF = (minutesF - minutes)*60
+                        
+            s += '%d°%d\'%.3f" %s'%(degree,minutes,secondsF,h[v<0])
+                        
+            if f:
+                s+=", "
+
+        return s
+
     @staticmethod
     def parse_string(co):
         lat = 0.0
@@ -60,7 +77,7 @@ class Coordinates:
                 
                 sp = s.partition("°")
                 if(sp[1] != ""):
-                    degree = float(sp[0])--depth
+                    degree = float(sp[0])
                     s = sp[2]
                 
                 sp = s.partition("'")
@@ -115,21 +132,18 @@ class Coordinates:
 
 if __name__ == "__main__":
     c1 = Coordinates.parse_string("Lat = -47° 25\" Nord,Lon = 010° 59' 3 0\" w")
-    c2 = Coordinates.parse_string("Lat = -47° 16` 12'' N, Lon = 10° 20` 30\" w")
+    c2 = Coordinates.parse_string("48° 7' 34'' , 7° 5' 56'' W ")
     
-    print c1.lat
-    print c1.lon
-    print c2.lat
-    print c2.lon    
-    print c1.distance(c2) , "Km"
+    print c1.strlatlon()
+    print c2.strlatlon()
+    print c1.distance_to(c2) , "Km"
     print "------------------"
     
     c1 = Coordinates.parse_string("-48.168991,11.5768")
     c2 = Coordinates.parse_string("-48.167288,11.575706")
     
-    print c1.lat
-    print c1.lon
-    print c2.lat
-    print c2.lon
-    print c1.distance(c2)*1000 , "m"
+    print c1.strlatlon()
+    print c2.strlatlon()
+    print c1.distance_to(c2)*1000 , "m"
+    
     
