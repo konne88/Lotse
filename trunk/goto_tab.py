@@ -6,12 +6,7 @@ from waypoint import Waypoint
 from coordinates import Coordinates
 from session import Session
 
-class TargetComboBoxEntry(gtk.ComboBoxEntry):
-    def __init__(self,model):
-        super(TargetComboBoxEntry, self).__init__(model)
 
-    def do_changed(self, a):
-        print "That realy sucks"
 
 class GotoTab(gtk.VBox):
     def __init__(self,session):
@@ -32,11 +27,15 @@ class GotoTab(gtk.VBox):
         self.pack_start(self.target,False)
         
         
-        self.output = gtk.Label()
+        self.output_pos = gtk.Label()
+        self.output_target = gtk.Label()
         self._session=session
         gobject.timeout_add(100, self.update_output)
         
-        self.add(self.output)
+        
+        self._current_target=None
+        self.add(self.output_pos)
+        self.add(self.output_target)
         
     def on_render_name(self, celllayout, cell, model, iter):
         v=model.get_value(iter, 0)
@@ -53,18 +52,34 @@ class GotoTab(gtk.VBox):
             cell.set_property('text', "")
     
     def on_target_select(self, combobox):   
-        print "Do as I wish"     
-
+        iter=combobox.get_active_iter()
+        if iter!=None:
+            v=self._session.wpList.get_value(iter, 0) 
+            if type(v)== Waypoint:
+                self._current_target=v
+                
+                
         
                 
     def update_output(self):
         wp = self._session.get_current_waypoint()
         
-        s  = 'Lat: %.5f °\n'%wp.lat
+        s = 'Your Position\n'
+        s += wp.strlatlon()+'\n'
+        s  += 'Lat: %.5f °\n'%wp.lat
         s += 'Lon: %.5f °\n'%wp.lon
         s += 'Alt: %.0f m\n'%wp.alt
         s += 'Speed: %.5f m/s\n'%wp.speed
         s += 'Heading: %.1f °'%wp.heading 
-        self.output.set_text(s)
+        self.output_pos.set_text(s)
+        
+        if self._current_target!=None:
+            dist_to_target=self._session.get_current_waypoint().distance_to(self._current_target)*1000
+            head_to_target= self._session.get_current_waypoint().heading_to(self._current_target)
+            s = 'Target\n'
+            s += self._current_target.strlatlon()+'\n'
+            s += 'Distance: %.0f m\n'%dist_to_target 
+            s += 'Direction %.1f °'%head_to_target
+            self.output_target.set_text(s)
         
         return 1

@@ -20,9 +20,9 @@ class WaypointTab(gtk.HBox):
         renderer = gtk.CellRendererText()
         renderer.set_property( 'editable', True )
         renderer.connect( 'edited', self.on_latlon_edited, model )
-        column = gtk.TreeViewColumn("Lat/Lon", renderer)
-        column.set_cell_data_func(renderer, self.on_render_latlon)
-        self._wpListView.append_column( column )
+        self.latlon_column = gtk.TreeViewColumn("Lat/Lon", renderer)
+        self.latlon_column.set_cell_data_func(renderer, self.on_render_latlon)
+        self._wpListView.append_column( self.latlon_column )
         
         renderer = gtk.CellRendererText()
         renderer.set_property( 'editable', True )
@@ -74,7 +74,7 @@ class WaypointTab(gtk.HBox):
         wp = model[path][0]
         wp.lat = c.lat
         wp.lon = c.lon
-        print new_text
+        print wp.strlatlon()
             
     def on_alt_edited( self, cell, path, new_text, model ):
         try:
@@ -90,7 +90,14 @@ class WaypointTab(gtk.HBox):
         while i is not None:
             if m.get_value(i,0) == self._session.manualSource:
                 wp = self._session.get_current_waypoint()
-                m.append(i,(wp,))
+                wp.name='Unnamed'
+                new_row = m.append(i,(wp,))
+                
+                self._wpListView.expand_row(
+                    m.get_path(i),True)
+                    
+                self._wpListView.grab_focus()
+                return True
             
             i = m.iter_next(i);
             

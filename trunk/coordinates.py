@@ -72,7 +72,7 @@ class Coordinates(object):
                 seconds = 0.0
                 
                 # remove all leading non digits
-                while not s[0].isdigit() and s[0] !="+" and s[0]!="-":
+                while not s[0].isdigit() and s[0] !="+" and s[0]!="-" and s[0]!="." and s[0]!=",":
                     s = s[1:]
                 
                 sp = s.partition("°")
@@ -97,6 +97,11 @@ class Coordinates(object):
                     s = sp[2]
                 
                 sp = s.partition("\"")
+                if(sp[1] != ""):
+                    seconds = float(sp[0])
+                    s = sp[2]
+                
+                sp = s.partition("\″")
                 if(sp[1] != ""):
                     seconds = float(sp[0])
                     s = sp[2]
@@ -132,7 +137,7 @@ class Coordinates(object):
 
 if __name__ == "__main__":
     c1 = Coordinates.parse_string("Lat = -47° 25\" Nord,Lon = 010° 59' 3 0\" w")
-    c2 = Coordinates.parse_string("48° 7' 34'' , 7° 5' 56'' W ")
+    c2 = Coordinates.parse_string("48° 45′ 20.6″ N, 9° 11′ 24.8″ E")
     
     print c1.strlatlon()
     print c2.strlatlon()

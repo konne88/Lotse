@@ -30,6 +30,7 @@ class LotseWindow(Window):
         self._notebook.append_page(self._waypointTab, Label('Waypoints'))
 
         self.connect('destroy', self.window_destroy)
+        self.set_geometry_hints(None,640,480)
         self.show_all()     
     
     def window_destroy(self,widget, data=None):

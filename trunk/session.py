@@ -5,6 +5,8 @@ from waypoint import Waypoint
 class Source(object):
     def __init__(self,name):
         self.name = name
+    def __str__():
+        return self.name    
 
 class Session(object):
     def __init__(self):
