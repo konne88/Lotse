@@ -6,5 +6,6 @@ class Waypoint(Coordinates):
         self.heading = head
         self.speed = speed
         self.name = name
+
     def __str__():
         return   'test'  

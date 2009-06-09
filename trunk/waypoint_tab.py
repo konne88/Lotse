@@ -84,12 +84,23 @@ class WaypointTab(gtk.HBox):
             
             
     def on_add(self, widget, data=None):
+        clipboard = gtk.Clipboard()
+        text = clipboard.wait_for_text()
+        if text != None:
+            try:
+                coord =Coordinates.parse_string(text)
+                wp = Waypoint(coord.lat, coord.lon, coord.alt)
+            except(ValueError):
+                wp = self._session.get_current_waypoint()    
+        else:
+            wp = self._session.get_current_waypoint()
+        
         m = self._session.wpList
         
         i = m.get_iter_first()
         while i is not None:
             if m.get_value(i,0) == self._session.manualSource:
-                wp = self._session.get_current_waypoint()
+                
                 wp.name='Unnamed'
                 new_row = m.append(i,(wp,))
                 

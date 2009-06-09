@@ -56,7 +56,7 @@ class Coordinates(object):
         co = s
         
         split = co.split(",")
-        if len(split)>2:
+        if len(split)!=2: 
             raise ValueError()
         
         i = 0

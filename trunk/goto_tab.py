@@ -80,7 +80,7 @@ class GotoTab(gtk.VBox):
             s += 'Direction %.1f°\n'%head_to_target
             relative_direction=head_to_target-wp.heading
             s += 'Turn %s by '%('left','right')[relative_direction>0]
-            s += '%.1f°\n'%relative_direction
+            s += '%.1f°\n'%abs(relative_direction)
             self.output_target.set_text(s)
         
         return 1
