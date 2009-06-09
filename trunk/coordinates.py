@@ -101,7 +101,7 @@ class Coordinates(object):
                     seconds = float(sp[0])
                     s = sp[2]
                 
-                sp = s.partition("\″")
+                sp = s.partition("″")
                 if(sp[1] != ""):
                     seconds = float(sp[0])
                     s = sp[2]

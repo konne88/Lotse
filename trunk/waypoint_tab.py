@@ -102,4 +102,8 @@ class WaypointTab(gtk.HBox):
             i = m.iter_next(i);
             
     def on_del(self, widget, data=None):
-        pass
+    
+        if self._wpListView.get_cursor()!=None:
+            model=self._wpListView.get_model()
+            iter=model.get_iter(self._wpListView.get_cursor()[0])
+            self._session.wpList.remove(iter)
