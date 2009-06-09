@@ -66,20 +66,21 @@ class GotoTab(gtk.VBox):
         
         s = 'Your Position\n'
         s += wp.strlatlon()+'\n'
-        s  += 'Lat: %.5f °\n'%wp.lat
-        s += 'Lon: %.5f °\n'%wp.lon
         s += 'Alt: %.0f m\n'%wp.alt
         s += 'Speed: %.5f m/s\n'%wp.speed
         s += 'Heading: %.1f °'%wp.heading 
         self.output_pos.set_text(s)
         
         if self._current_target!=None:
-            dist_to_target=self._session.get_current_waypoint().distance_to(self._current_target)*1000
-            head_to_target= self._session.get_current_waypoint().heading_to(self._current_target)
+            dist_to_target=wp.distance_to(self._current_target)*1000
+            head_to_target= wp.heading_to(self._current_target)
             s = 'Target\n'
             s += self._current_target.strlatlon()+'\n'
             s += 'Distance: %.0f m\n'%dist_to_target 
-            s += 'Direction %.1f °'%head_to_target
+            s += 'Direction %.1f°\n'%head_to_target
+            relative_direction=head_to_target-wp.heading
+            s += 'Turn %s by '%('left','right')[relative_direction>0]
+            s += '%.1f°\n'%relative_direction
             self.output_target.set_text(s)
         
         return 1

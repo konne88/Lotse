@@ -22,8 +22,8 @@ class Session(object):
             self._gps.fix.latitude,
             self._gps.fix.longitude,
             self._gps.fix.altitude,
-            self._gps.fix.speed,
-            self._gps.fix.track
+            self._gps.fix.track,
+            self._gps.fix.speed
         )
         
         return wp
