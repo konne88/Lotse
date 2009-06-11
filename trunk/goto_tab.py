@@ -5,8 +5,7 @@ import gobject
 from waypoint import Waypoint
 from coordinates import Coordinates
 from session import Session
-
-
+from radar import Radar
 
 class GotoTab(gtk.VBox):
     def __init__(self,session):
@@ -26,6 +25,8 @@ class GotoTab(gtk.VBox):
         
         self.pack_start(self.target,False)
         
+        self.radar = Radar()
+        self.pack_start(self.radar,False)
         
         self.output_pos = gtk.Label()
         self.output_target = gtk.Label()

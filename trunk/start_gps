@@ -1,0 +1,9 @@
+#!/bin/sh
+#http://ubuntuforums.org/showthread.php?t=642999
+modprobe garmin_gps
+mount -t usbfs none /proc/bus/usb/
+gpsd /dev/ttyUSB0 
+
+#gpsfake log.nmea &
+#sudo gpsd /dev/ttyS0
+#cgps
