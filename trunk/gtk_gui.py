@@ -17,6 +17,7 @@ class LotseWindow(hildon.Window):
     def __init__(self,session):
         super(LotseWindow,self).__init__()
         
+        self._session = session
         self._notebook = Notebook()
         self.add(self._notebook)
         
@@ -34,6 +35,7 @@ class LotseWindow(hildon.Window):
         self.show_all()     
     
     def window_destroy(self,widget, data=None):
+        self._session.save_persistent()    
         main_quit()
 
 # If the program is run directly or passed as an argument to the python
