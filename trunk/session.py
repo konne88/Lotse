@@ -48,21 +48,6 @@ class Session(object):
         )
         
         return wp
-    def foreach_wpListElement_persist(self, model, path, iter, doc):
-        curr_object=model.get_value(iter,0)#We only have 1 column
-        curr_section=self._curr_xml_section
-        
-        if issubclass(type(curr_object),Source):
-            #Add Sources Section
-            self._curr_xml_section=append_element(doc,curr_section,curr_object.name)
-
-        elif issubclass(type(curr_object),Waypoint):
-            append_element_with_data(doc,curr_section,'name',curr_object.name)
-            append_element_with_data(doc,curr_section,'latitude',curr_object.lat)
-            append_element_with_data(doc,curr_section,'longitude',curr_object.lon)
-            append_element_with_data(doc,curr_section,'altitude',curr_object.alt)
-           
-        
     
     def save_persistent(self):
         # writexml(self, writer, indent='', addindent='', newl='', encoding=None)
@@ -71,10 +56,23 @@ class Session(object):
         root = doc.documentElement
         
         #Add WaypointList Section
-        self._curr_xml_section=append_element(doc,root,'waypoint_list')
+        curr_section=append_element(doc,root,'waypoint_list')
         
-        self.wpList.foreach(self.foreach_wpListElement_persist, doc )
-       
+        def fe(model,path,iter):
+            curr_object=model.get_value(iter,0)  #We only have 1 column
+            
+            if issubclass(type(curr_object),Source):
+                #Add Sources Section
+                curr_section = append_element(doc,curr_section,curr_object.name)
+
+            elif issubclass(type(curr_object),Waypoint):
+                append_element_with_data(doc,curr_section,'name',curr_object.name)
+                append_element_with_data(doc,curr_section,'latitude',curr_object.lat)
+                append_element_with_data(doc,curr_section,'longitude',curr_object.lon)
+                append_element_with_data(doc,curr_section,'altitude',curr_object.alt)
+        
+        self.wpList.foreach(fe)
+        
         doc.writexml(file,' ',' ','\n', 'UTF-8')
         
 
