@@ -48,6 +48,22 @@ class Session(object):
         )
         
         return wp
+    def foreach_wpListElement_persist(self, model, path, iter, doc):
+        curr_object=model.get_value(iter,0)#We only have 1 column
+        curr_section=self._curr_xml_section
+        
+        if issubclass(type(curr_object),Source):
+            #Add Sources Section
+            self._curr_xml_section=append_element(doc,curr_section,curr_object.name)
+
+        elif issubclass(type(curr_object),Waypoint):
+            append_element_with_data(doc,curr_section,'name',curr_object.name)
+            append_element_with_data(doc,curr_section,'latitude',curr_object.lat)
+            append_element_with_data(doc,curr_section,'longitude',curr_object.lon)
+            append_element_with_data(doc,curr_section,'altitude',curr_object.alt)
+           
+        
+    
     def save_persistent(self):
         # writexml(self, writer, indent='', addindent='', newl='', encoding=None)
         file = open('persist.xml', 'w')
@@ -55,26 +71,10 @@ class Session(object):
         root = doc.documentElement
         
         #Add WaypointList Section
-        waypoint_list_section=append_element(doc,root,'waypoint_list')
-
+        self._curr_xml_section=append_element(doc,root,'waypoint_list')
         
-        l = self.wpList
-        i = l.get_iter_first()
-        while i is not None:
-            curr_object=l.get_value(i,0) #We only have 1 column
-            print curr_object.name
-            if issubclass(type(curr_object),Source):
-                #Add Sources Section
-                curr_source_section=append_element(doc,waypoint_list_section,'manual_source')
-
-            elif issubclass(type(curr_object),Waypoint):
-                append_element_with_data(doc,curr_source_section,'name',curr_object.name)
-                append_element_with_data(doc,curr_source_section,'latitude',curr_object.lat)
-                append_element_with_data(doc,curr_source_section,'longitude',curr_object.lon)
-                append_element_with_data(doc,curr_source_section,'altitude',curr_object.alt)
+        self.wpList.foreach(self.foreach_wpListElement_persist, doc )
        
-            
-            i = l.iter_next(i);  
         doc.writexml(file,' ',' ','\n', 'UTF-8')
         
 

@@ -117,4 +117,5 @@ class WaypointTab(gtk.HBox):
         if self._wpListView.get_cursor()!=None:
             model=self._wpListView.get_model()
             iter=model.get_iter(self._wpListView.get_cursor()[0])
-            self._session.wpList.remove(iter)
+            if issubclass(type(model.get_value(iter,0)),Waypoint):
+                self._session.wpList.remove(iter)
