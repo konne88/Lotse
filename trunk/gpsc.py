@@ -22,39 +22,39 @@ class Coordinates:
 session = gps.gps()
 
 while 1:
-        os.system('clear')
-        session.query('admosy')
-        # a = altitude, d = date/time, m=mode,
-        # o=postion/fix, s=status, y=satellites
+    #os.system('clear')
+    session.query('admosy')
+    # a = altitude, d = date/time, m=mode,
+    # o=postion/fix, s=status, y=satellites
 
-        print
-        print ' GPS reading'
-        print '----------------------------------------'
-        print 'latitude    ' , session.fix.latitude
-        print 'longitude   ' , session.fix.longitude
-        print 'time utc    ' , session.utc, session.fix.time
-        print 'altitude    ' , session.fix.altitude
-        #print 'eph         ' , session.fix.eph
-        #print 'epv         ' , session.fix.epv
-        #print 'ept         ' , session.fix.ept
-        print 'speed       ' , session.fix.speed
-        print 'climb       ' , session.fix.climb
-    print 'track       ' , session.fix.track
-    print 'status      ' , session.status       
+    print()
+    print(' GPS reading')
+    print('----------------------------------------')
+    print( 'latitude    ' , session.fix.latitude)
+    print( 'longitude   ' , session.fix.longitude)
+    print( 'time utc    ' , session.utc, session.fix.time)
+    print ('altitude    ' , session.fix.altitude)
+    #print 'eph         ' , session.fix.eph
+    #print 'epv         ' , session.fix.epv
+    #print 'ept         ' , session.fix.ept
+    print ('speed       ' , session.fix.speed)
+    print ('climb       ' , session.fix.climb)
+    print ('track       ' , session.fix.track)
+    print ('status      ' , session.status)       
     print
-        #print ' Satellites (total of', len(session.satellites) , ' in view)'
-        #for i in session.satellites:
-        #    print '\t', i
+    #print ' Satellites (total of', len(session.satellites) , ' in view)'
+    #for i in session.satellites:
+    #    print '\t', i
     if len(sys.argv)>3:
         altitude=float(sys.argv[3])
     else: 
         altitude=0
     
-    coord1 = coordinates(session.fix.latitude, session.fix.longitude, session.fix.altitude)
-    coord2 = coordinates(float(sys.argv[1]),float(sys.argv[2]), altitude)
+    coord1 = Coordinates(session.fix.latitude, session.fix.longitude, session.fix.altitude)
+    coord2 = Coordinates(float(sys.argv[1]),float(sys.argv[2]), altitude)
     
-    print 'Bearing to point (in degrees)',bearing(coord1,coord2)
-    print 'Distance to point (in m)', distance(coord1,coord2)*1000
-        time.sleep(1)
+    print ('Bearing to point (in degrees)',Coordinates.bearing(coord1,coord2))
+    print ('Distance to point (in m)', Coordinates.distance(coord1,coord2)*1000)
+    time.sleep(1)
 
 

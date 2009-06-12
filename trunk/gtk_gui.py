@@ -2,7 +2,7 @@
 #coding=utf-8
 
 #import osso
-import hildon
+#import hildon
 import  os, time, sys
 
 from gtk import *
@@ -13,7 +13,8 @@ from waypoint_tab import WaypointTab
 from session import Session
 from waypoint import Waypoint
 
-class LotseWindow(hildon.Window):
+#class LotseWindow(hildon.Window):
+class LotseWindow(Window):
     def __init__(self,session):
         super(LotseWindow,self).__init__()
         
@@ -42,7 +43,7 @@ class LotseWindow(hildon.Window):
 # interpreter then create a HelloWorld instance and show it
 if __name__ == "__main__":
     #   osso_c = osso.Context("osso_test_app", "0.0.1", False)
-    program  = hildon.Program()
+    #program  = hildon.Program()
     #  self.window = hildon.Window()
   
     session = Session()
