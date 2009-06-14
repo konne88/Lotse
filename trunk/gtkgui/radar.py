@@ -51,8 +51,8 @@ class Radar(gtk.Widget):
         cr = self.window.cairo_create()
 
         x, y, w, h = self.allocation
-        a_h = 10
-        a_w = 18
+        a_h = 15
+        a_w = 20
         cr.translate(w/2,h/2)
         
         # background
@@ -62,19 +62,46 @@ class Radar(gtk.Widget):
         cr.set_source_rgb(0, 0, 0)
         cr.stroke()
 
-        # position arrow
+        # target arrow
         if self.target is not None:
+    
+            
+            
             a_arc = math.radians(self.position.heading_to(self.target))
-            cr.rotate(a_arc)
+            #names are with heading facing up (North)
+            a_arcninety = math.radians(90.0)
+            
+            cr.set_source_rgb(1, 0.3, 0.2)
+            
+            tar_x=math.sin(a_arc)*(min(w,h)/2-a_h-2)
+            tar_y=-math.cos(a_arc)*(min(w,h)/2-a_h-2)
+            cr.arc(tar_x, tar_y, 4 , 0, 2 * math.pi) 
+            cr.fill()            
+            
+        #  heading arrow
+        if self.position.heading<=360.0 and self.position.heading>=0:
+            a_arc = math.radians(self.position.heading)
+            #names are with heading facing up (North)
+            a_arcninety = math.radians(90.0)
+            
+            cr.set_source_rgb(0, 0, 1)
+            cr.move_to(0,0)
+            x_leftdown=math.sin(a_arc-a_arcninety)*(a_w/2)
+            y_leftdown= -math.cos(a_arc-a_arcninety)*(a_w/2)
+            
+            x_rightdown = math.sin(a_arc+a_arcninety)*(a_w/2)
+            y_rightdown = -math.cos(a_arc+a_arcninety)*(a_w/2)
+            
+            x_tip=math.sin(a_arc)*a_h*2
+            y_tip=-math.cos(a_arc)*a_h*2
+            cr.move_to(x_leftdown,y_leftdown) # edge left down
+            cr.line_to(x_tip,y_tip)
+            cr.line_to(x_rightdown,y_rightdown)
 
-            cr.set_source_rgb(0, 0, 0)
-            cr.move_to(-a_w/2,-min(w,h)/2+a_h+2)
-            cr.rel_line_to (a_w, 0)
-            cr.rel_line_to (-a_w/2, -a_h)
             cr.close_path()
             cr.stroke()
             
-            cr.rotate(0)
+              
 
         # point in the middle
         cr.set_source_rgb(1, 0, 0)
