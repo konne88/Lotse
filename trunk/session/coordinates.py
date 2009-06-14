@@ -71,9 +71,13 @@ class Coordinates(object):
                 minutes = 0.0
                 seconds = 0.0
                 
+                print s
+                
                 # remove all leading non digits
-                while not s[0].isdigit() and s[0] !="+" and s[0]!="-" and s[0]!="." and s[0]!=",":
+                while not s[0].isdigit() and s[0] !="+" and s[0]!="-" and s[0]!=".":
                     s = s[1:]
+                    if s == "":
+                        raise ValueError()
                 
                 sp = s.partition("°")
                 if(sp[1] != ""):

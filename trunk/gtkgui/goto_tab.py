@@ -23,16 +23,21 @@ class GotoTab(gtk.VBox):
         self.target.connect('changed',self.on_target_select)
         self.pack_start(self.target,False)
         
+        gotobox = gtk.HBox()        
+        self.pack_start(gotobox)        
         self.radar = Radar(session.position, session.target)
-        self.pack_start(self.radar,False)
+        gotobox.pack_start(self.radar,True,True)
         
+        textbox = gtk.VBox()
+        gotobox.pack_start(textbox,False,False,10)
         self.output_pos = gtk.Label()
         self.output_target = gtk.Label()
-        self.add(self.output_pos)
-        self.add(self.output_target)
+        textbox.pack_start(self.output_pos)
+        textbox.pack_start(self.output_target)
         
         self._session.position_changed += self.on_position_changed
         self._session.target_changed += self.on_target_changed
+        self._session.position_changed += self.on_target_changed
         
     def on_render_name(self, celllayout, cell, model, iter):
         v=model.get_value(iter, 0)
@@ -81,6 +86,7 @@ class GotoTab(gtk.VBox):
             head_to_target = pos.heading_to(tar)
             
             s = 'Target\n'
+            s += tar.name+'\n'
             s += tar.strlatlon()+'\n'
             s += 'Distance: %.0f m\n'%dist_to_target 
             s += 'Direction %.1f°\n'%head_to_target

@@ -39,8 +39,8 @@ class Radar(gtk.Widget):
         self.window.move_resize(*self.allocation)
 
     def do_size_request(self, requisition):
-        requisition.width = 200
-        requisition.height = 200
+        requisition.width = 300
+        requisition.height = 300
 
     def do_size_allocate(self, allocation):
         self.allocation = allocation
@@ -51,8 +51,8 @@ class Radar(gtk.Widget):
         cr = self.window.cairo_create()
 
         x, y, w, h = self.allocation
-        a_h = 6
-        a_w = 14
+        a_h = 10
+        a_w = 18
         cr.translate(w/2,h/2)
         
         # background
@@ -68,7 +68,7 @@ class Radar(gtk.Widget):
             cr.rotate(a_arc)
 
             cr.set_source_rgb(0, 0, 0)
-            cr.move_to(-a_w/2,-h/2+a_h+2)
+            cr.move_to(-a_w/2,-min(w,h)/2+a_h+2)
             cr.rel_line_to (a_w, 0)
             cr.rel_line_to (-a_w/2, -a_h)
             cr.close_path()

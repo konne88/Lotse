@@ -89,8 +89,8 @@ class WaypointTab(gtk.HBox):
         wp = None
         if text != None:
             try:
-                coord =Coordinates.parse_string(text)
-                wp = Waypoint(coord.lat, coord.lon, nan)
+                coord = Coordinates.parse_string(text)
+                wp =  Waypoint(coord.lat, coord.lon, coord.alt)
             except(ValueError):
                 pass
         
