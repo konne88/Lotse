@@ -7,13 +7,16 @@ import xml.dom.minidom as xml
 # minidom
 # http://docs.python.org/library/xml.dom.minidom.html
 
-def append_element(doc,parent,name):
+def append_element(doc,parent,name, attribute_name=None, attribute_value=None):
     n = doc.createElement(name)
+    if attribute_name is not None:
+        n.setAttribute(attribute_name,attribute_value)
     parent.appendChild(n)
     return n
 
-def append_element_with_data(doc,parent,name,data):
-    n = append_element(doc,parent,name)
+def append_element_with_data(doc,parent, name, data,\
+                             attribute_name=None, attribute_value=None):
+    n = append_element(doc,parent,name, attribute_name, attribute_value)
     t = doc.createTextNode(str(data))
     n.appendChild(t)
     return n

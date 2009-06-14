@@ -1,6 +1,7 @@
 import gtk
 import gobject
 import xml.dom.minidom as xml
+import string
 
 import lib.easyxml as easyxml
 import lib.gps as gps
@@ -19,8 +20,9 @@ class Session(object):
     def __init__(self):
         self._gps = gps.gps()
         self.wpList = gtk.TreeStore(object)
-        self.manualSource = Source("Manual Waypoints")
+        self.manualSource = Source('Manual Waypoints')
         self.wpList.append(None,(self.manualSource,))
+        self.load_persistent()
         
         self._position = None
         self._target = None
@@ -29,6 +31,7 @@ class Session(object):
         self.target_changed = Event()
         
         self.update_position()
+        
         gobject.timeout_add(100, self.update_position)
     
     @property
@@ -68,13 +71,14 @@ class Session(object):
         
         if issubclass(type(curr_object),Source):
             #Add Sources Section
-            self._curr_xml_section=easyxml.append_element(doc,curr_section,curr_object.name)
+            self._curr_xml_section=easyxml.append_element(doc,curr_section,'source','type',curr_object.name)
 
         elif issubclass(type(curr_object),Waypoint):
-            easyxml.append_element_with_data(doc,curr_section,'name',curr_object.name)
-            easyxml.append_element_with_data(doc,curr_section,'latitude',curr_object.lat)
-            easyxml.append_element_with_data(doc,curr_section,'longitude',curr_object.lon)
-            easyxml.append_element_with_data(doc,curr_section,'altitude',curr_object.alt)
+            wp_xml=easyxml.append_element(doc,curr_section,'wp')
+            easyxml.append_element_with_data(doc,wp_xml,'name',curr_object.name)
+            easyxml.append_element_with_data(doc,wp_xml,'latitude',curr_object.lat)
+            easyxml.append_element_with_data(doc,wp_xml,'longitude',curr_object.lon)
+            easyxml.append_element_with_data(doc,wp_xml,'altitude',curr_object.alt)
            
     def save_persistent(self):
         # writexml(self, writer, indent='', addindent='', newl='', encoding=None)
@@ -98,10 +102,11 @@ class Session(object):
             waypoint_list = doc.getElementsByTagName('waypoints')[0]
             sources = waypoint_list.getElementsByTagName('source')
             for source in sources:
-                if source.getAttribute('type') == 'manual': 
-                    self.manualSource = Source('manual')
+                if source.getAttribute('type') == 'Manual Waypoints': 
+                    
+                    #self.manualSource = Source('Manual Waypoints')
                     waypoints=source.getElementsByTagName('wp')
-                    self.wpList.append(None,(self.manualSource,))
+                    #self.wpList.append(None,(self.manualSource,))
                     for waypoint in waypoints:
                         wp=Waypoint()
                         name_element = \
