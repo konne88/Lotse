@@ -80,7 +80,7 @@ class Radar(gtk.Widget):
             
         #  heading arrow
         if self.position.heading<=360.0 and self.position.heading>=0:
-            a_arc = math.radians(self.position.heading)
+            a_arc = math.radians(45.0)#self.position.heading)
             #names are with heading facing up (North)
             a_arcninety = math.radians(150.0)
             
