@@ -70,9 +70,7 @@ class Coordinates(object):
                 degree = 0.0
                 minutes = 0.0
                 seconds = 0.0
-                
-                print s
-                
+                                
                 # remove all leading non digits
                 while not s[0].isdigit() and s[0] !="+" and s[0]!="-" and s[0]!=".":
                     s = s[1:]

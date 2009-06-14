@@ -22,7 +22,8 @@ class Radar(gtk.Widget):
     
     def _redraw(self):
         x, y, w, h = self.allocation
-        self.window.invalidate_rect((0,0,w,h),False)
+        if self.window is not None:
+            self.window.invalidate_rect((0,0,w,h),False)
         
     def do_realize(self):
         self.set_flags(self.flags() | gtk.REALIZED)
@@ -63,20 +64,34 @@ class Radar(gtk.Widget):
         cr.stroke()
 
         # target arrow
-        if self.target is not None:
-    
+        if True:#self.target is not None:
+            a_arc = 2#math.radians(self.position.heading_to(self.target))
+            cr.rotate(a_arc)
+
+            cr.set_source_rgb(0, 0, 0)
+            cr.move_to(-a_w/2,-min(w,h)/2+a_h+2)
+            cr.rel_line_to (a_w, 0)
+            cr.rel_line_to (-a_w/2, -a_h)
+            cr.close_path()
+            cr.stroke()
             
+            cr.rotate(-a_arc)
+        
+            """
             
             a_arc = math.radians(self.position.heading_to(self.target))
             #names are with heading facing up (North)
             a_arcninety = math.radians(90.0)
             
             cr.set_source_rgb(1, 0.3, 0.2)
+            cr.move_to(-a_w/2)
+            
             
             tar_x=math.sin(a_arc)*(min(w,h)/2-a_h-2)
             tar_y=-math.cos(a_arc)*(min(w,h)/2-a_h-2)
             cr.arc(tar_x, tar_y, 4 , 0, 2 * math.pi) 
             cr.fill()            
+            """
             
         #  heading arrow
         #if self.position.heading<=360.0 and self.position.heading>=0:
