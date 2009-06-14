@@ -1,13 +1,14 @@
 import gtk
 import gobject
-from waypoint import Waypoint
-from coordinates import Coordinates
+from session.waypoint import Waypoint
+from session.coordinates import Coordinates
 
 class WaypointTab(gtk.HBox):
     def __init__(self,session):
+        super(WaypointTab,self).__init__()
+        
         model = session.wpList
         
-        super(WaypointTab,self).__init__()
         self._wpListView = gtk.TreeView(model)
         
         renderer = gtk.CellRendererText()
@@ -82,35 +83,32 @@ class WaypointTab(gtk.HBox):
         except(ValueError):
             pass
             
-            
     def on_add(self, widget, data=None):
         clipboard = gtk.Clipboard()
         text = clipboard.wait_for_text()
+        wp = None
         if text != None:
             try:
                 coord =Coordinates.parse_string(text)
                 wp = Waypoint(coord.lat, coord.lon, nan)
             except(ValueError):
-                wp = self._session.get_current_waypoint()    
-        else:
-            wp = self._session.get_current_waypoint()
+                pass
         
-        wp.name='Unnamed'
-        
+        if wp == None:
+            wp = self._session.position
+                
         m = self._session.wpList
         
         i = m.get_iter_first()
         while i is not None:
             if m.get_value(i,0) == self._session.manualSource:
-                
-                
                 new_row = m.append(i,(wp,))
                 
                 self._wpListView.expand_row(
                     m.get_path(i),True)
                     
                 self._wpListView.grab_focus()
-                return True
+                break
             
             i = m.iter_next(i);
             
