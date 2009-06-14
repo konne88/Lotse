@@ -89,11 +89,13 @@ class WaypointTab(gtk.HBox):
         if text != None:
             try:
                 coord =Coordinates.parse_string(text)
-                wp = Waypoint(coord.lat, coord.lon, coord.alt)
+                wp = Waypoint(coord.lat, coord.lon, nan)
             except(ValueError):
                 wp = self._session.get_current_waypoint()    
         else:
             wp = self._session.get_current_waypoint()
+        
+        wp.name='Unnamed'
         
         m = self._session.wpList
         
@@ -101,7 +103,7 @@ class WaypointTab(gtk.HBox):
         while i is not None:
             if m.get_value(i,0) == self._session.manualSource:
                 
-                wp.name='Unnamed'
+                
                 new_row = m.append(i,(wp,))
                 
                 self._wpListView.expand_row(
