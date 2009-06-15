@@ -58,7 +58,7 @@ class Session(object):
         
         if self._gps.fix.speed<1.0:
             ihead=0.0
-        else
+        else:
             ihead=self._gps.fix.track
         
         self.position = Position(
