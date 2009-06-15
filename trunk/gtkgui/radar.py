@@ -76,7 +76,7 @@ class Radar(gtk.Widget):
             cr.close_path()
             cr.stroke()
             
-        cr.rotate(-a_arc)
+            cr.rotate(-a_arc)
     
         cr.rotate(0)
         
