@@ -54,10 +54,11 @@ class Radar(gtk.Widget):
         x, y, w, h = self.allocation
         a_h = 15
         a_w = 20
+        bg_radius = min(w,h)/2 - a_h-5
         cr.translate(w/2,h/2)
         
         # background
-        cr.arc(0, 0, min(w,h)/2 - a_h-5 , 0, 2 * math.pi) 
+        cr.arc(0, 0, bg_radius , 0, 2 * math.pi) 
         cr.set_source_rgb(1, 1, 1)
         cr.fill_preserve()
         cr.set_source_rgb(0, 0, 0)
@@ -69,7 +70,7 @@ class Radar(gtk.Widget):
             cr.rotate(a_arc)
 
             cr.set_source_rgb(0, 0, 0)
-            cr.move_to(-a_w/2,-min(w,h)/2+a_h+2)
+            cr.move_to(-a_w/2,-bg_radius-2)
             cr.rel_line_to (a_w, 0)
             cr.rel_line_to (-a_w/2, -a_h)
             cr.close_path()
@@ -77,6 +78,13 @@ class Radar(gtk.Widget):
             
             cr.rotate(-a_arc)
         
+            cr.rotate(3)
+            
+            cr.set_source_rgb(0, 0, 0)
+            cr.move_to(-a_w/2,-bg_radius-2)
+            cr.text_path ("N");
+            
+            cr.rotate(-3)
             """
             
             a_arc = math.radians(self.position.heading_to(self.target))
