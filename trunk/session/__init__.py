@@ -24,8 +24,8 @@ class Session(object):
         self.wpList.append(None,(self.manualSource,))
         self.load_persistent()
         
-        self._position = None
-        self._target = None
+        self._position = Waypoint() # Should not be none to not cause invalid calls
+        self._target = Waypoint()
         
         self.position_changed = Event()
         self.target_changed = Event()
@@ -62,6 +62,8 @@ class Session(object):
             self._gps.fix.track,
             self._gps.fix.speed
         )
+        
+        
                 
         return True
  
