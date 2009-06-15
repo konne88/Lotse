@@ -61,15 +61,15 @@ class GotoTab(gtk.VBox):
                 self._session.target=v
 
     def on_position_changed(self):
-        pos = self._session.position
+        spos = self._session.sleek_position
         
-        self.radar.position = pos
+        self.radar.position = spos
         
         s = 'Your Position\n'
-        s += pos.strlatlon()+'\n'
-        s += 'Alt: %.0f m\n'%pos.alt
-        s += 'Speed: %.5f m/s\n'%pos.speed
-        s += 'Heading: %.1f °'%pos.iheading 
+        s += spos.strlatlon()+'\n'
+        s += 'Alt: %.0f m\n'%spos.alt
+        s += 'Speed: %.5f m/s\n'%spos.speed
+        s += 'Heading: %.1f °'%spos.heading 
         self.output_pos.set_text(s)
         
     def on_target_changed(self):
@@ -81,16 +81,17 @@ class GotoTab(gtk.VBox):
         
         if tar is not None:
             pos = self._session.position
+            spos = self._session.sleek_position
             
-            dist_to_target = pos.distance_to(tar)*1000
-            head_to_target = pos.heading_to(tar)
+            dist_to_target = spos.distance_to(tar)*1000
+            head_to_target = spos.heading_to(tar)
             
             s = 'Target\n'
             s += tar.name+'\n'
             s += tar.strlatlon()+'\n'
             s += 'Distance: %.0f m\n'%dist_to_target 
             s += 'Direction %.1f°\n'%head_to_target
-            relative_direction=head_to_target-pos.iheading
+            relative_direction=head_to_target-spos.heading
             s += 'Turn %s by '%('left','right')[relative_direction>0]
             s += '%.1f°\n'%abs(relative_direction)
             

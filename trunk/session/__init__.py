@@ -26,24 +26,23 @@ class Session(object):
         self.load_persistent()
         
         self._position = Position() # Should not be none to not cause invalid calls
+        self._sleek_position = Position()
         self._target = Waypoint()
         
         self.position_changed = Event()
         self.target_changed = Event()
         
         self.update_position()
-        
         gobject.timeout_add(100, self.update_position)
+    
+    @property
+    def sleek_position(self):
+        return self._sleek_position
     
     @property
     def position(self):
         return self._position
     
-    @position.setter
-    def position(self, value):
-        self._position = value
-        self.position_changed()
-        
     @property
     def target(self):
         return self._target
@@ -56,23 +55,32 @@ class Session(object):
     def update_position(self):
         self._gps.query('admosy')
         
-        if self._gps.fix.speed<1.0:
-            ihead=0.0
-        else:
-            ihead=self._gps.fix.track
-        
-        self.position = Position(
+        self._position = Position(
             self._gps.fix.latitude,
             self._gps.fix.longitude,
             self._gps.fix.altitude,
             self._gps.fix.track,
             self._gps.fix.speed,
-            ihead
         )
- 
         
+        if self._gps.fix.speed<1.0:
+            ihead=self.sleek_position.heading
+        else:
+            ihead=self._gps.fix.track
         
-                
+        if ihead != ihead:  #NaN
+            ihead = 0
+        
+        self._sleek_position = Position(
+            self._gps.fix.latitude,
+            self._gps.fix.longitude,
+            self._gps.fix.altitude,
+            ihead,
+            self._gps.fix.speed,
+        )
+        
+        self.position_changed()
+        
         return True
  
     def foreach_wpListElement_persist(self, model, path, iter, doc):

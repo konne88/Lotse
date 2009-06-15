@@ -66,7 +66,9 @@ class Radar(gtk.Widget):
 
         # target arrow
         if self.target is not None:
-            a_arc = math.radians(self.position.heading_to(self.target)-self.position.iheading)
+            a_arc = math.radians(self.position.heading_to(self.target) -
+                                 self.position.heading)
+            
             cr.rotate(a_arc)
 
             cr.set_source_rgb(0, 0, 0)
@@ -78,33 +80,28 @@ class Radar(gtk.Widget):
             
             cr.rotate(-a_arc)
     
-        cr.rotate(0)
-        
-        cr.set_source_rgb(0, 0, 0)
+        cr.set_source_rgb(1, 0, 0)
         cr.move_to(-a_w/2,-bg_radius-2)
-        cr.text_path ("N");
+        cr.rel_line_to (a_w, 0)
+        cr.rel_line_to (-a_w/2, -a_h)
+        cr.close_path()
+        cr.stroke()
+            
+        """
         
-        cr.rotate(0)
-            """
-            
-            a_arc = math.radians(self.position.heading_to(self.target))
-            #names are with heading facing up (North)
-            a_arcninety = math.radians(90.0)
-            
-            cr.set_source_rgb(1, 0.3, 0.2)
-            cr.move_to(-a_w/2)
-            
-            
-            tar_x=math.sin(a_arc)*(min(w,h)/2-a_h-2)
-            tar_y=-math.cos(a_arc)*(min(w,h)/2-a_h-2)
-            cr.arc(tar_x, tar_y, 4 , 0, 2 * math.pi) 
-            cr.fill()            
-            """
-            
+        a_arc = math.radians(self.position.heading_to(self.target))
+        #names are with heading facing up (North)
+        a_arcninety = math.radians(90.0)
         
-  
-
+        cr.set_source_rgb(1, 0.3, 0.2)
+        cr.move_to(-a_w/2)
         
+        
+        tar_x=math.sin(a_arc)*(min(w,h)/2-a_h-2)
+        tar_y=-math.cos(a_arc)*(min(w,h)/2-a_h-2)
+        cr.arc(tar_x, tar_y, 4 , 0, 2 * math.pi) 
+        cr.fill()            
+        """
         cr.set_source_rgb(0, 0, 1)
         cr.move_to(0,0)
 
@@ -114,9 +111,7 @@ class Radar(gtk.Widget):
 
         cr.close_path()
         cr.stroke()
-            
-              
-
+        
         # point in the middle
         cr.set_source_rgb(1, 0, 0)
         cr.arc(0, 0, 2 , 0, 2 * math.pi) 
