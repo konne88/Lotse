@@ -69,7 +69,7 @@ class GotoTab(gtk.VBox):
         s += pos.strlatlon()+'\n'
         s += 'Alt: %.0f m\n'%pos.alt
         s += 'Speed: %.5f m/s\n'%pos.speed
-        s += 'Heading: %.1f °'%pos.heading 
+        s += 'Heading: %.1f °'%pos.iheading 
         self.output_pos.set_text(s)
         
     def on_target_changed(self):
@@ -90,7 +90,7 @@ class GotoTab(gtk.VBox):
             s += tar.strlatlon()+'\n'
             s += 'Distance: %.0f m\n'%dist_to_target 
             s += 'Direction %.1f°\n'%head_to_target
-            relative_direction=head_to_target-pos.heading
+            relative_direction=head_to_target-pos.iheading
             s += 'Turn %s by '%('left','right')[relative_direction>0]
             s += '%.1f°\n'%abs(relative_direction)
             

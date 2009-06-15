@@ -66,8 +66,8 @@ class Radar(gtk.Widget):
 
         # target arrow
         if self.target is not None:
-            a_arc = math.radians(self.position.heading_to(self.target))
-            cr.rotate(a_arc-self.position.iheading)
+            a_arc = math.radians(self.position.heading_to(self.target)-self.position.iheading)
+            cr.rotate(a_arc)
 
             cr.set_source_rgb(0, 0, 0)
             cr.move_to(-a_w/2,-bg_radius-2)
@@ -76,15 +76,15 @@ class Radar(gtk.Widget):
             cr.close_path()
             cr.stroke()
             
-            cr.rotate(-(a_arc-self.position.iheading))
+        cr.rotate(-a_arc)
+    
+        cr.rotate(0)
         
-            cr.rotate(3)
-            
-            cr.set_source_rgb(0, 0, 0)
-            cr.move_to(-a_w/2,-bg_radius-2)
-            cr.text_path ("N");
-            
-            cr.rotate(-3)
+        cr.set_source_rgb(0, 0, 0)
+        cr.move_to(-a_w/2,-bg_radius-2)
+        cr.text_path ("N");
+        
+        cr.rotate(0)
             """
             
             a_arc = math.radians(self.position.heading_to(self.target))
