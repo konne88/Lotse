@@ -65,9 +65,9 @@ class Radar(gtk.Widget):
         cr.stroke()
 
         # target arrow
-        if True:#self.target is not None:
-            a_arc = 2#math.radians(self.position.heading_to(self.target))
-            cr.rotate(a_arc)
+        if self.target is not None:
+            a_arc = math.radians(self.position.heading_to(self.target))
+            cr.rotate(a_arc-self.position.iheading)
 
             cr.set_source_rgb(0, 0, 0)
             cr.move_to(-a_w/2,-bg_radius-2)
@@ -76,7 +76,7 @@ class Radar(gtk.Widget):
             cr.close_path()
             cr.stroke()
             
-            cr.rotate(-a_arc)
+            cr.rotate(-(a_arc-self.position.iheading))
         
             cr.rotate(3)
             
@@ -101,25 +101,16 @@ class Radar(gtk.Widget):
             cr.fill()            
             """
             
-        #  heading arrow
-        #if self.position.heading<=360.0 and self.position.heading>=0:
-        a_arc = math.radians(45.0)#self.position.heading)
-        #names are with heading facing up (North)
-        a_arcninety = math.radians(150.0)
+        
+  
+
         
         cr.set_source_rgb(0, 0, 1)
         cr.move_to(0,0)
-        x_leftdown=math.sin(a_arc-a_arcninety)*(a_w/2)
-        y_leftdown= -math.cos(a_arc-a_arcninety)*(a_w/2)
-        
-        x_rightdown = math.sin(a_arc+a_arcninety)*(a_w/2)
-        y_rightdown = -math.cos(a_arc+a_arcninety)*(a_w/2)
-        
-        x_tip=math.sin(a_arc)*a_h
-        y_tip=-math.cos(a_arc)*a_h
-        cr.move_to(x_leftdown,y_leftdown) # edge left down
-        cr.line_to(x_tip,y_tip)
-        cr.line_to(x_rightdown,y_rightdown)
+
+        cr.move_to(-a_w/2,a_h/2) # edge left down
+        cr.line_to(0,-a_h)
+        cr.line_to(a_w/2,a_h/2)
 
         cr.close_path()
         cr.stroke()

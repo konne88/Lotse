@@ -8,6 +8,7 @@ import lib.gps as gps
 from lib.event import Event
 
 from waypoint import Waypoint
+from position import Position
 
 class Source(object):
     def __init__(self,name):
@@ -55,13 +56,20 @@ class Session(object):
     def update_position(self):
         self._gps.query('admosy')
         
-        self.position = Waypoint(
+        if self._gps.fix.speed<1.0:
+            ihead=0.0
+        else
+            ihead=self._gps.fix.track
+        
+        self.position = Position(
             self._gps.fix.latitude,
             self._gps.fix.longitude,
             self._gps.fix.altitude,
             self._gps.fix.track,
-            self._gps.fix.speed
+            self._gps.fix.speed,
+            ihead
         )
+ 
         
         
                 
