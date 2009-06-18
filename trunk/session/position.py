@@ -5,3 +5,6 @@ class Position(Coordinates):
         super(Position, self).__init__(lat,lon,alt)
         self.heading = head
         self.speed = speed
+
+    def relative_heading_to(coord):
+        return heading_to(coord) - heading

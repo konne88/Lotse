@@ -137,7 +137,7 @@ class Session(object):
                             waypoint.getElementsByTagName('longitude')[0]
                         alt_element = \
                             waypoint.getElementsByTagName('altitude')[0]
-                                
+                        
                         wp.name = string.strip(name_element.firstChild.data)
                         wp.lat=float(lat_element.firstChild.data)
                         wp.lon=float(lon_element.firstChild.data)
