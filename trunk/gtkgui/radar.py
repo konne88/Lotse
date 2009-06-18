@@ -117,20 +117,20 @@ class Radar(gtk.Widget):
         cr.arc(0, 0, 2 , 0, 2 * math.pi) 
         cr.fill()
 
-    @property
-    def target(self):
+    def get_target(self):
         return self._target
-
-    @target.setter
-    def target(self, value):
+        
+    def set_target(self, value):
         self._redraw()
         self._target = value
+        
+    target = property(get_target,set_target)
 
-    @property
-    def position(self):
+    def get_position(self):
         return self._position
 
-    @position.setter
-    def position(self, value):
+    def set_position(self, value):
         self._redraw()
         self._position = value
+        
+    position = property(get_position,set_position)

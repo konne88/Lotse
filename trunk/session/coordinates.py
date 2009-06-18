@@ -41,7 +41,6 @@ class Coordinates(object):
 
         return s
 
-    @staticmethod
     def parse_string(co):
         lat = 0.0
         lon = 0.0
@@ -136,7 +135,9 @@ class Coordinates(object):
             i=i+1
             
         return Coordinates(lat,lon,0)
-
+    
+    parse_string = staticmethod(parse_string)
+    
 if __name__ == "__main__":
     c1 = Coordinates.parse_string("Lat = -47° 25\" Nord,Lon = 010° 59' 3 0\" w")
     c2 = Coordinates.parse_string("48° 45′ 20.6″ N, 9° 11′ 24.8″ E")

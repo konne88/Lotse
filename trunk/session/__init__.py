@@ -35,23 +35,25 @@ class Session(object):
         self.update_position()
         gobject.timeout_add(100, self.update_position)
     
-    @property
-    def sleek_position(self):
+    def get_sleek_position(self):
         return self._sleek_position
     
-    @property
-    def position(self):
+    sleek_position = property(get_sleek_position)
+    
+    def get_position(self):
         return self._position
     
-    @property
-    def target(self):
+    position = property(get_position)
+    
+    def get_target(self):
         return self._target
-
-    @target.setter
-    def target(self, value):
+        
+    def set_target(self, value):
         self._target = value
         self.target_changed()
-    
+        
+    target = property(get_target,set_target)
+
     def update_position(self):
         self._gps.query('admosy')
         
