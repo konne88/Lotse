@@ -95,7 +95,11 @@ class WaypointTab(gtk.HBox):
                 pass
         
         if wp == None:
-            wp = self._session.position
+            pos = self._session.sleek_position
+            wp = Waypoint()
+            wp.lat=pos.lat
+            wp.lon=pos.lon
+            wp.alt=pos.alt
                 
         m = self._session.wpList
         

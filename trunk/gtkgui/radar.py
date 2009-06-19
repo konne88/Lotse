@@ -66,8 +66,8 @@ class Radar(gtk.Widget):
 
         # target arrow
         if self.target is not None:
-            a_arc = math.radians(self.position.heading_to(self.target) -
-                                 self.position.heading)
+            a_arc = math.radians(self.sleek_position.heading_to(self.target) -
+                                 self.sleek_position.heading)
             
             cr.rotate(a_arc)
 

@@ -1,7 +1,7 @@
 #coding=utf-8
 
 #import osso
-#import hildon
+import hildon
 import  os, time, sys
 
 import gtk
@@ -10,8 +10,8 @@ from source_tab import SourceTab
 from goto_tab import GotoTab
 from waypoint_tab import WaypointTab
 
-#class LotseWindow(hildon.Window):
-class LotseWindow(gtk.Window):
+class LotseWindow(hildon.Window):
+#class LotseWindow(gtk.Window):
     def __init__(self,session):
         super(LotseWindow,self).__init__()
         

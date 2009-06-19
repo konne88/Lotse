@@ -33,7 +33,7 @@ class Session(object):
         self.target_changed = Event()
         
         self.update_position()
-        gobject.timeout_add(100, self.update_position)
+        gobject.timeout_add(1000, self.update_position)
     
     def get_sleek_position(self):
         return self._sleek_position

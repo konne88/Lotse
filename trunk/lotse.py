@@ -2,10 +2,11 @@
 
 import gtkgui
 import session
+import hildon
 
 if __name__ == "__main__":
     #   osso_c = osso.Context("osso_test_app", "0.0.1", False)
-    #program  = hildon.Program()
+    program  = hildon.Program()
     #  self.window = hildon.Window()
   
     ses = session.Session()
