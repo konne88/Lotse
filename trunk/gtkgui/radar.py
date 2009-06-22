@@ -9,6 +9,19 @@ import time
 from gtk import gdk
 import cairo
 
+ARROW_HEIGHT = 13
+ARROW_WIDTH = 20
+ARROW_RADAR_DISTANCE = 4
+ARROW_BORDER_DISTANCE = 3
+
+RADAR_REQUEST_SIZE = 300
+POINT_RADIUS = 3
+CENTER_POINT_RADIUS = 2
+
+CROSSHAIR_LINE_WIDTH = 1
+NORTH_COLOR = (1,0,0)
+HEADING_COLOR = (0,0,0)
+
 class Radar(gtk.Widget):
     __gsignals__ = { 'realize': 'override',
                      'expose-event' : 'override',
@@ -40,15 +53,27 @@ class Radar(gtk.Widget):
         self.window.move_resize(*self.allocation)
 
     def do_size_request(self, requisition):
-        requisition.width = 300
-        requisition.height = 300
+        requisition.width = RADAR_REQUEST_SIZE
+        requisition.height = RADAR_REQUEST_SIZE
 
     def do_size_allocate(self, allocation):
         self.allocation = allocation
         if self.flags() & gtk.REALIZED:
             self.window.move_resize(*allocation)
     
-    def draw_coordinate_into_radar(self,cr,radius,coord,maxDist):
+    def draw_arrow(self,cr,radius,arc,color):
+        cr.rotate(arc)
+
+        cr.set_source_rgb(color[0], color[1], color[2])
+        cr.move_to(-ARROW_WIDTH/2,-(radius+ARROW_RADAR_DISTANCE))
+        cr.rel_line_to (ARROW_WIDTH, 0)
+        cr.rel_line_to (-ARROW_WIDTH/2, -ARROW_HEIGHT)
+        cr.close_path()
+        cr.stroke()
+        
+        cr.rotate(-arc)
+    
+    def draw_coordinate_point(self,cr,radius,coord,maxDist,color):
         #distance to point from centre in drawing coordinates
         drawing_distance = self.position.distance_to(coord)*(radius/maxDist)
         if drawing_distance <= radius:
@@ -56,8 +81,8 @@ class Radar(gtk.Widget):
             x = math.sin(alpha)*drawing_distance
             y = -math.cos(alpha)*drawing_distance
             
-            cr.set_source_rgb(1, 0, 0)
-            cr.arc(x, y, 2 , 0, 2 * math.pi)
+            cr.set_source_rgb(color[0],color[1],color[2])
+            cr.arc(x, y, POINT_RADIUS , 0, 2 * math.pi)
             cr.fill()
             return True
             
@@ -67,13 +92,13 @@ class Radar(gtk.Widget):
         cr = self.window.cairo_create()
 
         x, y, w, h = self.allocation
-        a_h = 15
-        a_w = 20
-        bg_radius = min(w,h)/2 - a_h-5
+        radius = min(w,h)/2 - (ARROW_BORDER_DISTANCE+
+                               ARROW_HEIGHT+
+                               ARROW_RADAR_DISTANCE)
         cr.translate(w/2,h/2)
         
         # background
-        cr.arc(0, 0, bg_radius , 0, 2 * math.pi) 
+        cr.arc(0, 0, radius , 0, 2 * math.pi) 
         cr.set_source_rgb(1, 1, 1)
         cr.fill_preserve()
         cr.set_source_rgb(0, 0, 0)
@@ -84,44 +109,26 @@ class Radar(gtk.Widget):
             a_arc = math.radians(self.position.relative_heading_to(self.target))
             
             if a_arc==a_arc:    #nan
-                self.draw_coordinate_into_radar(cr,bg_radius,self.target,2)
-             
-                cr.rotate(a_arc)
-
-                cr.set_source_rgb(0, 0, 0)
-                cr.move_to(-a_w/2,-bg_radius-2)
-                cr.rel_line_to (a_w, 0)
-                cr.rel_line_to (-a_w/2, -a_h)
-                cr.close_path()
-                cr.stroke()
+                self.draw_coordinate_point(cr,radius,self.target,POINT_RADIUS,HEADING_COLOR)
+                self.draw_arrow(cr,radius,a_arc,HEADING_COLOR);
                 
-                cr.rotate(-a_arc)
-        
         # north arrow
-        a_arc = math.radians(0.0 - self.position.heading)
+        a_arc = math.radians(-self.position.heading)
         if a_arc==a_arc:
-            cr.rotate(a_arc)
-            cr.set_source_rgb(1, 0, 0)
-            cr.move_to(-a_w/2,-bg_radius-2)
-            cr.rel_line_to (a_w, 0)
-            cr.rel_line_to (-a_w/2, -a_h)
-            cr.close_path()
-            cr.stroke()
-            cr.rotate(-a_arc)    
+            self.draw_arrow(cr,radius,a_arc,NORTH_COLOR);  
 
-        cr.set_source_rgb(0, 0, 1)
-        cr.move_to(0,0)
-
-        cr.move_to(-a_w/2,a_h/2) # edge left down
-        cr.line_to(0,-a_h)
-        cr.line_to(a_w/2,a_h/2)
-
-        cr.close_path()
+        # crosshair
+        cr.set_line_width(1)
+        cr.set_source_rgb(0.7, 0.7, 0.7)
+        cr.move_to(-radius,0)
+        cr.line_to(radius,0)
+        cr.move_to(0,-radius)
+        cr.line_to(0,radius)
         cr.stroke()
         
         # point in the middle
         cr.set_source_rgb(1, 0, 0)
-        cr.arc(0, 0, 2 , 0, 2 * math.pi) 
+        cr.arc(0, 0, CENTER_POINT_RADIUS , 0, 2 * math.pi) 
         cr.fill()
     
     def get_target(self):
