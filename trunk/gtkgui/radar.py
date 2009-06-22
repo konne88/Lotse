@@ -16,6 +16,7 @@ ARROW_BORDER_DISTANCE = 3
 
 RADAR_REQUEST_SIZE = 300
 POINT_RADIUS = 3
+RADAR_RADIUS_IN_KM=1
 CENTER_POINT_RADIUS = 2
 
 CROSSHAIR_LINE_WIDTH = 1
@@ -109,7 +110,7 @@ class Radar(gtk.Widget):
             a_arc = math.radians(self.position.relative_heading_to(self.target))
             
             if a_arc==a_arc:    #nan
-                self.draw_coordinate_point(cr,radius,self.target,POINT_RADIUS,HEADING_COLOR)
+                self.draw_coordinate_point(cr,radius,self.target,RADAR_RADIUS_IN_KM,HEADING_COLOR)
                 self.draw_arrow(cr,radius,a_arc,HEADING_COLOR);
                 
         # north arrow
