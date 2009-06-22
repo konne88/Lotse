@@ -25,7 +25,7 @@ class GotoTab(gtk.VBox):
         
         gotobox = gtk.HBox()        
         self.pack_start(gotobox)        
-        self.radar = Radar(session.position, session.target)
+        self.radar = Radar(session.position, session.target, session.wpList)
         gotobox.pack_start(self.radar,True,True)
         
         textbox = gtk.VBox()

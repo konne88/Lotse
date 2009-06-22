@@ -24,15 +24,16 @@ NORTH_COLOR = (1,0,0)
 HEADING_COLOR = (0,0,0)
 
 class Radar(gtk.Widget):
-    __gsignals__ = { 'realize': 'override',
+    gsignals__ = { 'realize': 'override',
                      'expose-event' : 'override',
                      'size-allocate': 'override',
                      'size-request': 'override',}
 
-    def __init__(self,position,target):
+    def __init__(self,position, target, wpList):
         super(Radar,self).__init__()
         self._position = position
         self._target = target
+        self._wpList = wpList
     
     def _redraw(self):
         x, y, w, h = self.allocation
@@ -104,20 +105,6 @@ class Radar(gtk.Widget):
         cr.fill_preserve()
         cr.set_source_rgb(0, 0, 0)
         cr.stroke()
-
-        # target arrow
-        if self.target is not None:
-            a_arc = math.radians(self.position.relative_heading_to(self.target))
-            
-            if a_arc==a_arc:    #nan
-                self.draw_coordinate_point(cr,radius,self.target,RADAR_RADIUS_IN_KM,HEADING_COLOR)
-                self.draw_arrow(cr,radius,a_arc,HEADING_COLOR);
-                
-        # north arrow
-        a_arc = math.radians(-self.position.heading)
-        if a_arc==a_arc:
-            self.draw_arrow(cr,radius,a_arc,NORTH_COLOR);  
-
         # crosshair
         cr.set_line_width(1)
         cr.set_source_rgb(0.7, 0.7, 0.7)
@@ -126,6 +113,35 @@ class Radar(gtk.Widget):
         cr.move_to(0,-radius)
         cr.line_to(0,radius)
         cr.stroke()
+
+        # target arrow
+        if self.target is not None:
+            a_arc = math.radians(self.position.relative_heading_to(self.target))
+            
+            if a_arc==a_arc:    #nan
+                #self.draw_coordinate_point(cr,radius,self.target,RADAR_RADIUS_IN_KM,HEADING_COLOR)
+                self.draw_arrow(cr,radius,a_arc,HEADING_COLOR);
+        
+        m = self._session.wpList
+        i = m.get_iter_first()
+        while i is not None:
+            if m.get_value(i,0) == self._session.manualSource:
+                pass
+            elif m.get_value(i,0) == self.target:
+                self.draw_coordinate_point(cr,radius,self.target,RADAR_RADIUS_IN_KM,HEADING_COLOR)
+            else:
+                self.draw_coordinate_point(cr,radius,m.get_value(i,0),RADAR_RADIUS_IN_KM,(0.5,0.5,0.5))
+            
+                        
+            
+            i = m.iter_next(i);
+                
+        # north arrow
+        a_arc = math.radians(-self.position.heading)
+        if a_arc==a_arc:
+            self.draw_arrow(cr,radius,a_arc,NORTH_COLOR);  
+
+
         
         # point in the middle
         cr.set_source_rgb(1, 0, 0)

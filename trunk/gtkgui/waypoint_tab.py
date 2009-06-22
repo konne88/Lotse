@@ -101,8 +101,7 @@ class WaypointTab(gtk.HBox):
             wp.lon=pos.lon
             wp.alt=pos.alt
                 
-        m = self._session.wpList
-        
+        m = self._session.wpList        
         i = m.get_iter_first()
         while i is not None:
             if m.get_value(i,0) == self._session.manualSource:
