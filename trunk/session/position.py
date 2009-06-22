@@ -6,5 +6,5 @@ class Position(Coordinates):
         self.heading = head
         self.speed = speed
 
-    def relative_heading_to(coord):
-        return heading_to(coord) - heading
+    def relative_heading_to(self,coord):
+        return self.heading_to(coord) - self.heading

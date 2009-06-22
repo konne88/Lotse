@@ -19,6 +19,7 @@ class Radar(gtk.Widget):
         super(Radar,self).__init__()
         self._position = position
         self._target = target
+        self._scale = 1000.0
     
     def _redraw(self):
         x, y, w, h = self.allocation
@@ -54,11 +55,11 @@ class Radar(gtk.Widget):
         x, y, w, h = self.allocation
         a_h = 15
         a_w = 20
-        bg_radius = min(w,h)/2 - a_h-5
+        self._bg_radius = min(w,h)/2 - a_h-5
         cr.translate(w/2,h/2)
         
         # background
-        cr.arc(0, 0, bg_radius , 0, 2 * math.pi) 
+        cr.arc(0, 0, self._bg_radius , 0, 2 * math.pi) 
         cr.set_source_rgb(1, 1, 1)
         cr.fill_preserve()
         cr.set_source_rgb(0, 0, 0)
@@ -68,40 +69,32 @@ class Radar(gtk.Widget):
         if self.target is not None:
             a_arc = math.radians(self.position.heading_to(self.target) -
                                  self.position.heading)
-            
-            cr.rotate(a_arc)
+            if a_arc==a_arc:
+                cr.rotate(a_arc)
 
-            cr.set_source_rgb(0, 0, 0)
-            cr.move_to(-a_w/2,-bg_radius-2)
+                cr.set_source_rgb(0, 0, 0)
+                cr.move_to(-a_w/2,-self._bg_radius-2)
+                cr.rel_line_to (a_w, 0)
+                cr.rel_line_to (-a_w/2, -a_h)
+                cr.close_path()
+                cr.stroke()
+                
+                cr.rotate(-a_arc)
+                
+                self.draw_position(cr,self.target)
+        
+        #Draw North Arrow
+        a_arc = math.radians(0.0 - self.position.heading)
+        if a_arc==a_arc:
+            cr.rotate(a_arc)
+            cr.set_source_rgb(1, 0, 0)
+            cr.move_to(-a_w/2,-self._bg_radius-2)
             cr.rel_line_to (a_w, 0)
             cr.rel_line_to (-a_w/2, -a_h)
             cr.close_path()
             cr.stroke()
-            
-            cr.rotate(-a_arc)
-    
-        cr.set_source_rgb(1, 0, 0)
-        cr.move_to(-a_w/2,-bg_radius-2)
-        cr.rel_line_to (a_w, 0)
-        cr.rel_line_to (-a_w/2, -a_h)
-        cr.close_path()
-        cr.stroke()
-            
-        """
-        
-        a_arc = math.radians(self.position.heading_to(self.target))
-        #names are with heading facing up (North)
-        a_arcninety = math.radians(90.0)
-        
-        cr.set_source_rgb(1, 0.3, 0.2)
-        cr.move_to(-a_w/2)
-        
-        
-        tar_x=math.sin(a_arc)*(min(w,h)/2-a_h-2)
-        tar_y=-math.cos(a_arc)*(min(w,h)/2-a_h-2)
-        cr.arc(tar_x, tar_y, 4 , 0, 2 * math.pi) 
-        cr.fill()            
-        """
+            cr.rotate(-a_arc)    
+
         cr.set_source_rgb(0, 0, 1)
         cr.move_to(0,0)
 
@@ -116,7 +109,22 @@ class Radar(gtk.Widget):
         cr.set_source_rgb(1, 0, 0)
         cr.arc(0, 0, 2 , 0, 2 * math.pi) 
         cr.fill()
-
+    
+    def draw_position(self,cr ,draw_pos):
+        
+        #distance to point from centre in drawing coordinates
+        drawing_distance = self._position.distance_to(draw_pos)*1000*\
+            (self._bg_radius/self._scale)
+        if drawing_distance<self._bg_radius:    
+            alpha=math.radians(self._position.heading_to(draw_pos)-self._position.heading)
+            x=math.sin(alpha)*drawing_distance
+            y=-(math.cos(alpha)*drawing_distance)
+            
+            
+            cr.set_source_rgb(0, 0, 0)
+            cr.arc(x, y, 2 , 0, 2 * math.pi) 
+            cr.fill()
+    
     def get_target(self):
         return self._target
         

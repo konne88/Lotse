@@ -85,13 +85,13 @@ class GotoTab(gtk.VBox):
             
             dist_to_target = spos.distance_to(tar)*1000
             head_to_target = spos.heading_to(tar)
+            relative_direction=spos.relative_heading_to(tar)
             
             s = 'Target\n'
             s += tar.name+'\n'
             s += tar.strlatlon()+'\n'
             s += 'Distance: %.0f m\n'%dist_to_target 
-            s += 'Direction %.1f°\n'%head_to_target
-            relative_direction=head_to_target-spos.heading
+            s += 'Direction %.1f°\n'%head_to_target            
             s += 'Turn %s by '%('left','right')[relative_direction>0]
             s += '%.1f°\n'%abs(relative_direction)
             
