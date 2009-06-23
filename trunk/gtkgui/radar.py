@@ -139,6 +139,7 @@ class Radar(gtk.Widget):
             i = m.iter_next(i);
         
         # north arrow
+        a_arc = math.radians(-self.position.heading) 
         self.draw_arrow(cr,radius,a_arc,NORTH_COLOR)
                 
         # point in the middle
