@@ -72,7 +72,7 @@ class Radar(gtk.Widget):
             self.window.move_resize(*allocation)
     
     def draw_arrow(self,cr,radius,arc,color):
-        if a_arc==a_arc:
+        if arc==arc:
             cr.rotate(arc)
 
             cr.set_source_rgb(color[0], color[1], color[2])
