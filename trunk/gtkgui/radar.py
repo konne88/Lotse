@@ -9,6 +9,14 @@ import time
 from gtk import gdk
 import cairo
 
+from session.coordinates import Coordinates
+from session.waypoint import Waypoint
+from session.position import Position
+
+from session.coordinates import Coordinates
+from session.waypoint import Waypoint
+from session.position import Position
+
 ARROW_HEIGHT = 13
 ARROW_WIDTH = 20
 ARROW_RADAR_DISTANCE = 4
@@ -24,7 +32,7 @@ NORTH_COLOR = (1,0,0)
 HEADING_COLOR = (0,0,0)
 
 class Radar(gtk.Widget):
-    gsignals__ = { 'realize': 'override',
+    __gsignals__ = { 'realize': 'override',
                      'expose-event' : 'override',
                      'size-allocate': 'override',
                      'size-request': 'override',}
@@ -119,22 +127,25 @@ class Radar(gtk.Widget):
             a_arc = math.radians(self.position.relative_heading_to(self.target))
             
             if a_arc==a_arc:    #nan
-                #self.draw_coordinate_point(cr,radius,self.target,RADAR_RADIUS_IN_KM,HEADING_COLOR)
+                
                 self.draw_arrow(cr,radius,a_arc,HEADING_COLOR);
         
-        m = self._session.wpList
+
+                    
+        m = self._wpList        
         i = m.get_iter_first()
         while i is not None:
-            if m.get_value(i,0) == self._session.manualSource:
-                pass
-            elif m.get_value(i,0) == self.target:
-                self.draw_coordinate_point(cr,radius,self.target,RADAR_RADIUS_IN_KM,HEADING_COLOR)
-            else:
-                self.draw_coordinate_point(cr,radius,m.get_value(i,0),RADAR_RADIUS_IN_KM,(0.5,0.5,0.5))
-            
-                        
+            ic = m.iter_children(i)
+            if ic is not None:
+                while ic is not None:
+                    if m.get_value(ic,0) == self.target:
+                        self.draw_coordinate_point(cr,radius,self.target,RADAR_RADIUS_IN_KM,HEADING_COLOR)
+                    else:
+                        self.draw_coordinate_point(cr,radius,m.get_value(ic,0),RADAR_RADIUS_IN_KM,(0.5,0.5,0.5))
+                    ic = m.iter_next(ic)    
             
             i = m.iter_next(i);
+   
                 
         # north arrow
         a_arc = math.radians(-self.position.heading)
