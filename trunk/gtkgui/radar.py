@@ -72,16 +72,17 @@ class Radar(gtk.Widget):
             self.window.move_resize(*allocation)
     
     def draw_arrow(self,cr,radius,arc,color):
-        cr.rotate(arc)
+        if a_arc==a_arc:
+            cr.rotate(arc)
 
-        cr.set_source_rgb(color[0], color[1], color[2])
-        cr.move_to(-ARROW_WIDTH/2,-(radius+ARROW_RADAR_DISTANCE))
-        cr.rel_line_to (ARROW_WIDTH, 0)
-        cr.rel_line_to (-ARROW_WIDTH/2, -ARROW_HEIGHT)
-        cr.close_path()
-        cr.stroke()
-        
-        cr.rotate(-arc)
+            cr.set_source_rgb(color[0], color[1], color[2])
+            cr.move_to(-ARROW_WIDTH/2,-(radius+ARROW_RADAR_DISTANCE))
+            cr.rel_line_to (ARROW_WIDTH, 0)
+            cr.rel_line_to (-ARROW_WIDTH/2, -ARROW_HEIGHT)
+            cr.close_path()
+            cr.stroke()
+            
+            cr.rotate(-arc)
     
     def draw_coordinate_point(self,cr,radius,coord,maxDist,color):
         #distance to point from centre in drawing coordinates
@@ -122,38 +123,24 @@ class Radar(gtk.Widget):
         cr.line_to(0,radius)
         cr.stroke()
 
-        # target arrow
-        if self.target is not None:
-            a_arc = math.radians(self.position.relative_heading_to(self.target))
-            
-            if a_arc==a_arc:    #nan
-                
-                self.draw_arrow(cr,radius,a_arc,HEADING_COLOR);
-        
-
-                    
+                      
         m = self._wpList        
         i = m.get_iter_first()
         while i is not None:
-            ic = m.iter_children(i)
-            if ic is not None:
-                while ic is not None:
-                    if m.get_value(ic,0) == self.target:
-                        self.draw_coordinate_point(cr,radius,self.target,RADAR_RADIUS_IN_KM,HEADING_COLOR)
-                    else:
-                        self.draw_coordinate_point(cr,radius,m.get_value(ic,0),RADAR_RADIUS_IN_KM,(0.5,0.5,0.5))
-                    ic = m.iter_next(ic)    
-            
+            ic = m.iter_children(i)            
+            while ic is not None:
+                if m.get_value(ic,0) == self.target:
+                    self.draw_coordinate_point(cr,radius,self.target,RADAR_RADIUS_IN_KM,HEADING_COLOR)
+                    a_arc = math.radians(self.position.relative_heading_to(self.target))            
+                    self.draw_arrow(cr,radius,a_arc,HEADING_COLOR);
+                else:
+                    self.draw_coordinate_point(cr,radius,m.get_value(ic,0),RADAR_RADIUS_IN_KM,(0.5,0.5,0.5))
+                ic = m.iter_next(ic)              
             i = m.iter_next(i);
-   
-                
-        # north arrow
-        a_arc = math.radians(-self.position.heading)
-        if a_arc==a_arc:
-            self.draw_arrow(cr,radius,a_arc,NORTH_COLOR);  
-
-
         
+        # north arrow
+        self.draw_arrow(cr,radius,a_arc,NORTH_COLOR)
+                
         # point in the middle
         cr.set_source_rgb(1, 0, 0)
         cr.arc(0, 0, CENTER_POINT_RADIUS , 0, 2 * math.pi) 
