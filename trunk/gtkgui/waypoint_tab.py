@@ -2,6 +2,7 @@ import gtk
 import gobject
 from session.waypoint import Waypoint
 from session.coordinates import Coordinates
+from session.waypointloader import WaypointLoader
 
 class WaypointTab(gtk.HBox):
     def __init__(self,session):
@@ -9,6 +10,7 @@ class WaypointTab(gtk.HBox):
         
         model = session.wpList
         
+        self.wpLoader = WaypointLoader(session.wpList)
         self._wpListView = gtk.TreeView(model)
         
         renderer = gtk.CellRendererText()
@@ -144,15 +146,15 @@ class WaypointTab(gtk.HBox):
         filter.set_name("Waypoints")
         filter.add_pattern("*.gpx")
         filter.add_pattern("*.GPX")
-        filter.add_pattern("*.kml")
-        filter.add_pattern("*.KML")      
+        #filter.add_pattern("*.kml")
+        #filter.add_pattern("*.KML")      
         dialog.add_filter(filter)
 
 
         response = dialog.run()
         if response == gtk.RESPONSE_OK:
             print dialog.get_filename()
-            
+            self.wpLoader.load_from_file(dialog.get_filename())
         elif response == gtk.RESPONSE_CANCEL:
             pass
            
