@@ -21,8 +21,7 @@ class Session(object):
     def __init__(self):
         self._gps = gps.gps()
         self.wpList = gtk.TreeStore(object)
-        self.manualSource = Source('Manual Waypoints')
-        self.wpList.append(None,(self.manualSource,))
+
         self.load_persistent()
         
         self._position = Position() # Should not be none to not cause invalid calls
@@ -118,15 +117,14 @@ class Session(object):
             file = open('persist.xml', 'r')
         
             doc = xml.parse(file)
-            assert doc.documentElement.tagName == 'session'
-            waypoint_list = doc.getElementsByTagName('waypoints')[0]
-            sources = waypoint_list.getElementsByTagName('source')
-            for source in sources:
-                if source.getAttribute('type') == 'Manual Waypoints': 
-                    
-                    #self.manualSource = Source('Manual Waypoints')
-                    waypoints=source.getElementsByTagName('wp')
-                    #self.wpList.append(None,(self.manualSource,))
+            if doc.documentElement.tagName == 'session':
+                waypoint_list = doc.getElementsByTagName('waypoints')[0]
+                sources = waypoint_list.getElementsByTagName('source')
+                for source in sources:
+                    currentSource = Source(source.getAttribute('type'))
+                    sourceIter = self.wpList.append(None,(currentSource,))                                   
+
+                    waypoints=source.getElementsByTagName('wp')                    
                     for waypoint in waypoints:
                         wp=Waypoint()
                         name_element = \
@@ -140,19 +138,23 @@ class Session(object):
                         
                         wp.name = string.strip(name_element.firstChild.data)
                         wp.lat=float(lat_element.firstChild.data)
-                        wp.lon=float(lon_element.firstChild.data)
+                        wp.lon=float(lon_element.firstChild.data)                        
                         wp.alt=float(alt_element.firstChild.data)
                         
-                        m = self.wpList
+                        #Append Waypoint to correct Source Object
+                        self.wpList.append(sourceIter,(wp,))
                         
-                        i = m.get_iter_first()
-                        while i is not None:
-                            if m.get_value(i,0) == self.manualSource:
-                                new_row = m.append(i,(wp,))                                    
-                            i = m.iter_next(i);
-            
+            #if document is empty or contains garbage raise IOError   after cleaning up                    
+            else:
+                doc.unlink()
+                file.close()
+                raise IOError
+                
             doc.unlink()
             file.close()
             return True
         except(IOError):
+            #The File is not available for reading so insert standard Source into the list
+            currentSource = Source('Manual Waypoints')
+            self.wpList.append(None,(self.currentSource,))
             return False

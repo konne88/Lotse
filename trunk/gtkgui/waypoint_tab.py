@@ -33,11 +33,14 @@ class WaypointTab(gtk.HBox):
         self._wpListView.append_column( column ) 
                    
         bBox= gtk.VButtonBox()
-        
+        bBox.set_layout(gtk.BUTTONBOX_START)
         self._add = gtk.Button('Add')
         self._del = gtk.Button('Delete')
-        bBox.pack_start(self._add, False)
-        bBox.pack_start(self._del, False)
+        self._import = gtk.Button('Import')
+        
+        bBox.pack_start(self._add, False,False)
+        bBox.pack_start(self._del, False,False)
+        bBox.pack_start(self._import, False,False)
         
         scroll = gtk.ScrolledWindow()
         scroll.add(self._wpListView)
@@ -46,6 +49,7 @@ class WaypointTab(gtk.HBox):
         
         self._add.connect('clicked',self.on_add)
         self._del.connect('clicked',self.on_del)
+        self._import.connect('clicked',self.on_import)
         
         self._session = session
         
@@ -122,3 +126,36 @@ class WaypointTab(gtk.HBox):
             iter=model.get_iter(self._wpListView.get_cursor()[0])
             if issubclass(type(model.get_value(iter,0)),Waypoint):
                 self._session.wpList.remove(iter)
+
+      
+    def on_import(self, widget, data=None):
+        dialog = gtk.FileChooserDialog("Open..",
+                               None,
+                               gtk.FILE_CHOOSER_ACTION_OPEN,
+                               (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        dialog.set_default_response(gtk.RESPONSE_OK)
+
+        #filter = gtk.FileFilter()
+        #filter.set_name("All files")
+        #filter.add_pattern("*")
+        #dialog.add_filter(filter)
+        filter = gtk.FileFilter()
+        filter.set_name("Waypoints")
+        filter.add_pattern("*.gpx")
+        filter.add_pattern("*.GPX")
+        filter.add_pattern("*.kml")
+        filter.add_pattern("*.KML")      
+        dialog.add_filter(filter)
+
+
+        response = dialog.run()
+        if response == gtk.RESPONSE_OK:
+            print dialog.get_filename()
+            
+        elif response == gtk.RESPONSE_CANCEL:
+            pass
+           
+        dialog.destroy()
+        
+        
