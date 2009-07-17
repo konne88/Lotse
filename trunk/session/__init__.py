@@ -84,15 +84,15 @@ class Session(object):
         
         return True
  
-    def foreach_wpListElement_persist(self, model, path, iter, doc):
+    def foreach_wpListElement_persist(self, model, path, iter,( doc, waypoint_section)):
         curr_object = model.get_value(iter,0)#We only have 1 column
         curr_section = self._curr_xml_section
         
         if issubclass(type(curr_object),Source):
             #Add Sources Section
-            self._curr_xml_section=easyxml.append_element(doc,curr_section,'source','type',curr_object.name)
+            self._curr_xml_section=easyxml.append_element(doc, waypoint_section,'source','type',curr_object.name)
 
-        elif issubclass(type(curr_object),Waypoint):
+        elif issubclass(type(curr_object),Waypoint) and curr_section != None:
             wp_xml=easyxml.append_element(doc,curr_section,'wp')
             easyxml.append_element_with_data(doc,wp_xml,'name',curr_object.name)
             easyxml.append_element_with_data(doc,wp_xml,'latitude',curr_object.lat)
@@ -104,11 +104,11 @@ class Session(object):
         file = open('persist.xml', 'w')
         doc = easyxml.create_doc('session')
         root = doc.documentElement
-        
+        self._curr_xml_section=None
         #Add WaypointList Section
-        self._curr_xml_section=easyxml.append_element(doc,root,'waypoints')
+        waypoint_section=easyxml.append_element(doc,root,'waypoints')
         
-        self.wpList.foreach(self.foreach_wpListElement_persist, doc )
+        self.wpList.foreach(self.foreach_wpListElement_persist,( doc, waypoint_section ))
        
         doc.writexml(file,' ',' ','\n', 'UTF-8')
 
@@ -122,6 +122,7 @@ class Session(object):
                 sources = waypoint_list.getElementsByTagName('source')
                 for source in sources:
                     currentSource = Source(source.getAttribute('type'))
+                    print source.getAttribute('type')
                     sourceIter = self.wpList.append(None,(currentSource,))                                   
 
                     waypoints=source.getElementsByTagName('wp')                    
@@ -140,7 +141,7 @@ class Session(object):
                         wp.lat=float(lat_element.firstChild.data)
                         wp.lon=float(lon_element.firstChild.data)                        
                         wp.alt=float(alt_element.firstChild.data)
-                        
+                        print '---'+wp.name
                         #Append Waypoint to correct Source Object
                         self.wpList.append(sourceIter,(wp,))
                         
@@ -156,5 +157,5 @@ class Session(object):
         except(IOError):
             #The File is not available for reading so insert standard Source into the list
             currentSource = Source('Manual Waypoints')
-            self.wpList.append(None,(self.currentSource,))
+            self.wpList.append(None,(currentSource,))
             return False

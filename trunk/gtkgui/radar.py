@@ -134,6 +134,7 @@ class Radar(gtk.Widget):
                     a_arc = math.radians(self.position.relative_heading_to(self.target))            
                     self.draw_arrow(cr,radius,a_arc,HEADING_COLOR);
                 else:
+                   
                     self.draw_coordinate_point(cr,radius,m.get_value(ic,0),RADAR_RADIUS_IN_KM,(0.5,0.5,0.5))
                 ic = m.iter_next(ic)              
             i = m.iter_next(i);

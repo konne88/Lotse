@@ -3,6 +3,7 @@ import gobject
 from session.waypoint import Waypoint
 from session.coordinates import Coordinates
 from session.waypointloader import WaypointLoader
+from session import Source
 
 class WaypointTab(gtk.HBox):
     def __init__(self,session):
@@ -110,13 +111,13 @@ class WaypointTab(gtk.HBox):
         m = self._session.wpList        
         i = m.get_iter_first()
         while i is not None:
-            if m.get_value(i,0) == self._session.manualSource:
+            if type(m.get_value(i,0)) == Source and  m.get_value(i,0).name == "Manual Waypoints":
                 new_row = m.append(i,(wp,))
                 
                 self._wpListView.expand_row(
                     m.get_path(i),True)
                     
-                self._wpListView.grab_focus()
+                #self._wpListView.grab_focus()
                 break
             
             i = m.iter_next(i);
