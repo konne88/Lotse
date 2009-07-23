@@ -40,10 +40,12 @@ class WaypointTab(gtk.HBox):
         self._add = gtk.Button('Add')
         self._del = gtk.Button('Delete')
         self._import = gtk.Button('Import')
+        self._select = gtk.Button('Select')
         
         bBox.pack_start(self._add, False,False)
         bBox.pack_start(self._del, False,False)
         bBox.pack_start(self._import, False,False)
+        bBox.pack_start(self._select, False,False)
         
         scroll = gtk.ScrolledWindow()
         scroll.add(self._wpListView)
@@ -53,6 +55,7 @@ class WaypointTab(gtk.HBox):
         self._add.connect('clicked',self.on_add)
         self._del.connect('clicked',self.on_del)
         self._import.connect('clicked',self.on_import)
+        self._select.connect('clicked',self.on_select)
         
         self._session = session
         
@@ -111,7 +114,7 @@ class WaypointTab(gtk.HBox):
         m = self._session.wpList        
         i = m.get_iter_first()
         while i is not None:
-            if type(m.get_value(i,0)) == Source and  m.get_value(i,0).name == "Manual Waypoints":
+            if type(m.get_value(i,0)) == Source and  m.get_value(i,0)== self._session.manualSource:
                 new_row = m.append(i,(wp,))
                 
                 self._wpListView.expand_row(
@@ -124,11 +127,19 @@ class WaypointTab(gtk.HBox):
             
     def on_del(self, widget, data=None):
     
-        if self._wpListView.get_cursor()!=None:
+        if self._wpListView.get_cursor()is not None:
             model=self._wpListView.get_model()
             iter=model.get_iter(self._wpListView.get_cursor()[0])
-            if issubclass(type(model.get_value(iter,0)),Waypoint):
-                self._session.wpList.remove(iter)
+            value = model.get_value(iter,0)
+            
+            if issubclass(type(value),Waypoint):
+                model.remove(iter)
+            elif issubclass(type(value),Source): 
+                model.remove(iter)
+                if value == self._session.manualSource:    
+                    model.append(None,(self._session.manualSource,))  
+                
+                    
 
       
     def on_import(self, widget, data=None):
@@ -161,4 +172,12 @@ class WaypointTab(gtk.HBox):
            
         dialog.destroy()
         
+    def on_select(self, widget, data=None):
+        
+        if self._wpListView.get_cursor()!=None:
+            model=self._wpListView.get_model()
+            iter=model.get_iter(self._wpListView.get_cursor()[0])
+            value = model.get_value(iter,0)
+            if issubclass(type(value),Waypoint):
+                self._session.set_target(value)
         

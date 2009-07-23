@@ -122,7 +122,9 @@ class Session(object):
                 sources = waypoint_list.getElementsByTagName('source')
                 for source in sources:
                     currentSource = Source(source.getAttribute('type'))
-                    print source.getAttribute('type')
+                    if currentSource.name == "Manual Waypoints":
+                        self.manualSource = currentSource
+                        
                     sourceIter = self.wpList.append(None,(currentSource,))                                   
 
                     waypoints=source.getElementsByTagName('wp')                    
@@ -141,7 +143,7 @@ class Session(object):
                         wp.lat=float(lat_element.firstChild.data)
                         wp.lon=float(lon_element.firstChild.data)                        
                         wp.alt=float(alt_element.firstChild.data)
-                        print '---'+wp.name
+                        #print '---'+wp.name
                         #Append Waypoint to correct Source Object
                         self.wpList.append(sourceIter,(wp,))
                         
@@ -157,5 +159,6 @@ class Session(object):
         except(IOError):
             #The File is not available for reading so insert standard Source into the list
             currentSource = Source('Manual Waypoints')
+            self.manualSource = currentSource
             self.wpList.append(None,(currentSource,))
             return False
