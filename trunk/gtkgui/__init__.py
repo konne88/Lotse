@@ -9,6 +9,7 @@ import gtk
 #from source_tab import SourceTab
 from goto_tab import GotoTab
 from waypoint_tab import WaypointTab
+from log_tab import LogTab
 
 #class LotseWindow(hildon.Window):
 class LotseWindow(gtk.Window):
@@ -22,11 +23,13 @@ class LotseWindow(gtk.Window):
         self._gotoTab = GotoTab(session)
         self._notebook.append_page(self._gotoTab, gtk.Label('Goto'))
         
-        #self._sourceTab = SourceTab(session)
-        #self._notebook.append_page(self._sourceTab, gtk.Label('Sources'))
+  
         
         self._waypointTab = WaypointTab(session)
         self._notebook.append_page(self._waypointTab, gtk.Label('Waypoints'))
+        
+        self._logTab = LogTab(session)
+        self._notebook.append_page(self._logTab, gtk.Label('Log'))
 
         self.connect('destroy', self.window_destroy)
         self.set_geometry_hints(None,640,480)

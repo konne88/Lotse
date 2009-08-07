@@ -24,11 +24,14 @@ def append_element_with_data(doc,parent, name, data,\
 def create_doc(root):
     impl = xml.getDOMImplementation()
     doc = impl.createDocument(None, root, None)
+    
+    
     return doc
 
 if __name__ == "__main__":
     doc = create_doc('status')
     root = doc.documentElement
+    root.setAttribute('version','1.1')
     append_element_with_data(doc,root,'fix','fix')
     append_element_with_data(doc,root,'latitude','latitude')
     append_element_with_data(doc,root,'longitude','longitude')

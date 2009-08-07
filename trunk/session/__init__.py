@@ -2,6 +2,7 @@ import gtk
 import gobject
 import xml.dom.minidom as xml
 import string
+import os 
 
 import lib.easyxml as easyxml
 import lib.gps as gps
@@ -21,6 +22,10 @@ class Session(object):
     def __init__(self):
         self._gps = gps.gps()
         self.wpList = gtk.TreeStore(object)
+                
+        self.settingsdir = os.path.expanduser("~/.lotse")
+        if not os.path.exists(self.settingsdir):
+            os.makedirs(self.settingsdir)
 
         self.load_persistent()
         
@@ -30,9 +35,11 @@ class Session(object):
         
         self.position_changed = Event()
         self.target_changed = Event()
+        self._time = 0
         
-        self.update_position()
-        gobject.timeout_add(1000, self.update_position)
+        self.update()
+        gobject.timeout_add(400, self.update)
+        
     
     def get_sleek_position(self):
         return self._sleek_position
@@ -44,6 +51,16 @@ class Session(object):
     
     position = property(get_position)
     
+    def get_time(self):
+        return self._time
+        
+    time = property(get_time)
+    
+    def get_fix(self):
+        return self._fix
+        
+    fix = property(get_fix)
+       
     def get_target(self):
         return self._target
         
@@ -53,35 +70,40 @@ class Session(object):
         
     target = property(get_target,set_target)
 
-    def update_position(self):
+    def update(self):
         self._gps.query('admosy')
-        
-        self._position = Position(
-            self._gps.fix.latitude,
-            self._gps.fix.longitude,
-            self._gps.fix.altitude,
-            self._gps.fix.track,
-            self._gps.fix.speed,
-        )
-        
-        if self._gps.fix.speed<1.0:
-            ihead=self.sleek_position.heading
-        else:
-            ihead=self._gps.fix.track
-        
-        if ihead != ihead:  #NaN
-            ihead = 0
-        
-        self._sleek_position = Position(
-            self._gps.fix.latitude,
-            self._gps.fix.longitude,
-            self._gps.fix.altitude,
-            ihead,
-            self._gps.fix.speed,
-        )
-        
-        self.position_changed()
-        
+        if self._time != self._gps.fix.time: 
+            self._time = self._gps.fix.time   
+            self._fix = self._gps.fix.mode     
+            
+            self._position = Position(
+                self._gps.fix.latitude,
+                self._gps.fix.longitude,
+                self._gps.fix.altitude,
+                self._gps.fix.track,
+                self._gps.fix.speed,
+            )
+            
+            if self._gps.fix.speed<1.0:
+                ihead=self.sleek_position.heading
+            else:
+                ihead=self._gps.fix.track
+            
+            if ihead != ihead:  #NaN
+                ihead = 0
+            
+            self._sleek_position = Position(
+                self._gps.fix.latitude,
+                self._gps.fix.longitude,
+                self._gps.fix.altitude,
+                ihead,
+                self._gps.fix.speed,
+            )
+            
+            
+            
+            self.position_changed()
+           
         return True
  
     def foreach_wpListElement_persist(self, model, path, iter,( doc, waypoint_section)):
@@ -101,7 +123,7 @@ class Session(object):
            
     def save_persistent(self):
         # writexml(self, writer, indent='', addindent='', newl='', encoding=None)
-        file = open('persist.xml', 'w')
+        file = open(os.path.join(self.settingsdir,'persist.xml'), 'w')
         doc = easyxml.create_doc('session')
         root = doc.documentElement
         self._curr_xml_section=None
@@ -114,7 +136,8 @@ class Session(object):
 
     def load_persistent(self):
         try:
-            file = open('persist.xml', 'r')
+
+            file = open(os.path.join(self.settingsdir,'persist.xml'), 'r')
         
             doc = xml.parse(file)
             if doc.documentElement.tagName == 'session':
