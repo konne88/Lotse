@@ -51,10 +51,16 @@ class GPXLogger(Logger):
         super(GPXLogger,self).stop()   
         self._segment_node = None
         
-    def end(self):
+    def __del__(self):
+        print self.get_name()+ ' closed'
         self._segment_node = None
         file = open(self._filename, 'w')
         self._doc.writexml(file,' ',' ','\n', 'UTF-8')    
+        
+    def get_name(self):
+        return 'GPXLogger: '+self._filename
+        
+    name  =  property(get_name)             
         
     def on_position_changed(self):
         #Example

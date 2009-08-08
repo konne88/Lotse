@@ -36,8 +36,9 @@ class LogTab(gtk.VBox):
         self._stop.connect('clicked',self.on_stop)
         self._end.connect('clicked',self.on_end)
         
-        self._logger = GPXLogger(self._session, 'log.xml')
-        
+        self._logger = GPXLogger(self._session, 'log.gpx')
+        self._logger.status_changed += self.on_status_changed
+        self.on_status_changed(self._logger)
     
     def on_start(self, widget, data=None):
         self._logger.start()
@@ -46,5 +47,11 @@ class LogTab(gtk.VBox):
         self._logger.stop()
     
     def on_end(self, widget, data=None):
-        self._logger.end()
+        self._logger.stop()
+        self._logger = GPXLogger(self._session, 'log.gpx')
+        
+    def on_status_changed(self, sender):
+        s=sender.name+'\n'+('Not Running','Running')[int(sender.running)]
+        self._loginfo.set_text(s)
+            
         
