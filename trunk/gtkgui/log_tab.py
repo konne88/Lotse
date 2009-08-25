@@ -16,42 +16,43 @@ class LogTab(gtk.VBox):
     def __init__(self,session):
         super(LogTab,self).__init__()
         self._session=session
-        
+
         self._loginfo = gtk.Label()        
-        
+
         bBox= gtk.VButtonBox()
         bBox.set_layout(gtk.BUTTONBOX_START)
         self._start = gtk.Button('Start Logging')
         self._stop = gtk.Button('Pause logging')
         self._end = gtk.Button('End Logging')      
-        
+
         bBox.pack_start(self._start, False,False)
         bBox.pack_start(self._stop, False,False)
         bBox.pack_start(self._end, False,False)
-        
+
         self.pack_start(self._loginfo)
         self.pack_start(bBox)
-        
+
         self._start.connect('clicked',self.on_start)
         self._stop.connect('clicked',self.on_stop)
         self._end.connect('clicked',self.on_end)
-        
+
         self._logger = GPXLogger(self._session, 'log.gpx')
         self._logger.status_changed += self.on_status_changed
         self.on_status_changed(self._logger)
-    
+
     def on_start(self, widget, data=None):
         self._logger.start()
-    
+
     def on_stop(self, widget, data=None):
         self._logger.stop()
-    
+
     def on_end(self, widget, data=None):
         self._logger.stop()
         self._logger = GPXLogger(self._session, 'log.gpx')
-        
+        self._logger.status_changed += self.on_status_changed
+        self.on_status_changed(self._logger)
+
     def on_status_changed(self, sender):
         s=sender.name+'\n'+('Not Running','Running')[int(sender.running)]
         self._loginfo.set_text(s)
-            
-        
+
