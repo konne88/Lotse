@@ -46,10 +46,14 @@ class GPXLogger(Logger):
     def stop(self):
         super(GPXLogger,self).stop()   
         self._segment_node = None
-
+    
+    def flush(self):
+        file = open(self._filename, 'w')
+        self._doc.writexml(file,' ',' ','\n', 'UTF-8')    
+        file.close()
+        
     def __del__(self):
         print self.get_name()+ ' closed'
-        self._segment_node = None
         file = open(self._filename, 'w')
         self._doc.writexml(file,' ',' ','\n', 'UTF-8')    
 

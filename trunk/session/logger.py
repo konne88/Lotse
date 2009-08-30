@@ -20,7 +20,10 @@ class Logger(object):
             self._session.position_changed -= self.on_position_changed
             self._running = False
             self.status_changed(self)
-
+    
+    def flush(self):        
+        pass
+    
     def get_running(self):
         print 'is running'
         return self._running

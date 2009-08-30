@@ -35,22 +35,57 @@ class LogTab(gtk.VBox):
         self._start.connect('clicked',self.on_start)
         self._stop.connect('clicked',self.on_stop)
         self._end.connect('clicked',self.on_end)
+        self._logger = None #So that we can test for it
 
-        self._logger = GPXLogger(self._session, 'log.gpx')
-        self._logger.status_changed += self.on_status_changed
-        self.on_status_changed(self._logger)
+        
+    def create_logger(self):
+        dialog = gtk.FileChooserDialog("Open..",
+                               None,
+                               gtk.FILE_CHOOSER_ACTION_SAVE,
+                               (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        dialog.set_default_response(gtk.RESPONSE_OK)
+
+        #filter = gtk.FileFilter()
+        #filter.set_name("All files")
+        #filter.add_pattern("*")
+        #dialog.add_filter(filter)
+        filter = gtk.FileFilter()
+        filter.set_name("Waypoints")
+        filter.add_pattern("*.gpx")
+        filter.add_pattern("*.GPX")
+        #filter.add_pattern("*.kml")
+        #filter.add_pattern("*.KML")      
+        dialog.add_filter(filter)
+
+
+        response = dialog.run()
+        if response == gtk.RESPONSE_OK:
+
+            self._logger = GPXLogger(self._session, dialog.get_filename())
+            self._logger.status_changed += self.on_status_changed
+            self.on_status_changed(self._logger)
+            dialog.destroy()
+            return True
+        else:
+            dialog.destroy()
+            return False
+           
+            
 
     def on_start(self, widget, data=None):
-        self._logger.start()
+        if create_logger():
+            self._logger.start()
 
     def on_stop(self, widget, data=None):
-        self._logger.stop()
+        if self._logger != None:
+            self._logger.stop()
 
     def on_end(self, widget, data=None):
-        self._logger.stop()
-        self._logger = GPXLogger(self._session, 'log.gpx')
-        self._logger.status_changed += self.on_status_changed
-        self.on_status_changed(self._logger)
+        if self._logger != None:
+            self._logger.stop()
+            self._logger = None
+
 
     def on_status_changed(self, sender):
         s=sender.name+'\n'+('Not Running','Running')[int(sender.running)]
