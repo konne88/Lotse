@@ -25,7 +25,6 @@ class Logger(object):
         pass
     
     def get_running(self):
-        print 'is running'
         return self._running
 
     running = property(get_running)  

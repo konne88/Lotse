@@ -82,5 +82,5 @@ class GPXLogger(Logger):
 
             easyxml.append_element_with_data(self._doc,trkpt_node,'fix','%dd'%(self._session.fix))
 
-        print 'Time: '+time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(self._session.time))
+        #print 'Time: '+time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(self._session.time))
 
