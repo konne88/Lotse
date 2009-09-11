@@ -23,8 +23,8 @@ ARROW_RADAR_DISTANCE = 4
 ARROW_BORDER_DISTANCE = 3
 
 RADAR_REQUEST_SIZE = 300
-POINT_RADIUS = 5
-RADAR_RADIUS_IN_KM=800.0
+POINT_RADIUS = 1
+RADAR_RADIUS_IN_KM=22000.0
 CENTER_POINT_RADIUS = 2
 
 CROSSHAIR_LINE_WIDTH = 1
@@ -46,25 +46,45 @@ class Radar(gtk.Widget):
         self._session.position_changed += self._redraw
         self._session.target_changed += self._redraw
         
+        self._session.wpList.connect("row_changed",self.waypoint_changed)
+                
         self.connect("button_release_event", self.button_release)
 
         # unmask events
         self.add_events(gdk.BUTTON_PRESS_MASK |
                         gdk.BUTTON_RELEASE_MASK |
                         gdk.POINTER_MOTION_MASK)
-                      
 
-    def select_as_target(self, widget):
-        pass
+    def waypoint_changed(self,path, iter,data):
+        self._redraw()
+
+    def select_as_target(self, widget, (x,y)):
+        coord = self.xy_to_coordinates(x,y)
+        smallest_dist = RADAR_RADIUS_IN_KM*3
+        closest_wp = None
+        
+        m = self._session.wpList        
+        i = m.get_iter_first()
+        while i is not None:
+            ic = m.iter_children(i)
+            while ic is not None:
+                wp = m.get_value(ic,0)
+                dist = coord.distance_to(wp)
+                if dist < smallest_dist:
+                    smallest_dist = dist
+                    closest_wp = wp
+                ic = m.iter_next(ic)
+            i = m.iter_next(i);
+
+        if closest_wp != None:
+            self._session.target = closest_wp
 
     def create_new_waypoint(self, widget,(x,y)):
         wp = Waypoint()
         wp.name = "Unnamed Radarpoint"
         wp.set_coordinates(self.xy_to_coordinates(x,y))
-        
-    
+            
         self._session.wpList.append(self._session.get_manual_list_iter(),(wp,))
-        self._redraw()
 
     def button_release(self, widget, event):
         #print '(%f,%f)'%(event.x , event.y)
@@ -72,9 +92,9 @@ class Radar(gtk.Widget):
         
         menu = gtk.Menu()
         
-        select_as_target = gtk.MenuItem("Select as Target")
+        select_as_target = gtk.MenuItem("Select nearest Waypoint")
         menu.append(select_as_target)
-        select_as_target.connect("activate", self.select_as_target)
+        select_as_target.connect("activate", self.select_as_target, (event.x,event.y))
         select_as_target.show()
         
         create_new_waypoint = gtk.MenuItem("Create new Waypoint")
@@ -191,14 +211,13 @@ class Radar(gtk.Widget):
         while i is not None:
             ic = m.iter_children(i)            
             while ic is not None:
-                if m.get_value(ic,0) == self._session.target:
-                    self.draw_coordinate_point(cr,radius,self._session.target,RADAR_RADIUS_IN_KM,HEADING_COLOR)
-                    a_arc = math.radians(self._session.sleek_position.relative_heading_to(self._session.target))            
-                    self.draw_arrow(cr,radius,a_arc,HEADING_COLOR);
-                else:
-                    self.draw_coordinate_point(cr,radius,m.get_value(ic,0),RADAR_RADIUS_IN_KM,WAYPOINT_COLOR)
+                self.draw_coordinate_point(cr,radius,m.get_value(ic,0),RADAR_RADIUS_IN_KM,WAYPOINT_COLOR)
                 ic = m.iter_next(ic)              
             i = m.iter_next(i);
+            
+        self.draw_coordinate_point(cr,radius,self._session.target,RADAR_RADIUS_IN_KM,HEADING_COLOR)
+        a_arc = math.radians(self._session.sleek_position.relative_heading_to(self._session.target))            
+        self.draw_arrow(cr,radius,a_arc,HEADING_COLOR);
         
         # north arrow
         a_arc = math.radians(-self._session.sleek_position.heading) 
