@@ -23,13 +23,15 @@ ARROW_RADAR_DISTANCE = 4
 ARROW_BORDER_DISTANCE = 3
 
 RADAR_REQUEST_SIZE = 300
-POINT_RADIUS = 3
+POINT_RADIUS = 5
 RADAR_RADIUS_IN_KM=10
 CENTER_POINT_RADIUS = 2
 
 CROSSHAIR_LINE_WIDTH = 1
+
 NORTH_COLOR = (1,0,0)
 HEADING_COLOR = (0,0,0)
+WAYPOINT_COLOR = (0,0,1)
 
 class Radar(gtk.Widget):
     __gsignals__ = { 'realize': 'override',
@@ -42,7 +44,42 @@ class Radar(gtk.Widget):
         self._position = position
         self._target = target
         self._wpList = wpList
-    
+        
+        self.connect("button_release_event", self.button_release)
+
+        # unmask events
+        self.add_events(gdk.BUTTON_PRESS_MASK |
+                        gdk.BUTTON_RELEASE_MASK |
+                        gdk.POINTER_MOTION_MASK)
+
+    def select_as_target(self, widget):
+        pass
+
+    def create_new_waypoint(self, widget,(x,y)):
+        wp = Waypoint()
+        wp.name = "Unnamed Radarpoint"
+        wp.set_coordinates(self.xy_to_coordinates(x,y))
+        self._wpList.append(self._wpList.fromPath("0:0"),(wp,))
+
+    def button_release(self, widget, event):
+        print '(%f,%f)'%(event.x , event.y)
+        print event
+        
+        menu = gtk.Menu()
+        
+        select_as_target = gtk.MenuItem("Select as Target")
+        menu.append(select_as_target)
+        select_as_target.connect("activate", self.select_as_target)
+        select_as_target.show()
+        
+        create_new_waypoint = gtk.MenuItem("Create new Waypoint")
+        menu.append(create_new_waypoint)
+        create_new_waypoint.connect("activate", self.create_new_waypoint, (event.x,event.y))
+        create_new_waypoint.show()
+        
+        menu.popup(None,None,None,event.button,event.time)
+        
+     
     def _redraw(self):
         x, y, w, h = self.allocation
         if self.window is not None:
@@ -84,6 +121,21 @@ class Radar(gtk.Widget):
             
             cr.rotate(-arc)
     
+    def xy_to_coordinates(self,x,y):
+        xleft, ytop, w, h = self.allocation
+        xrel=w/2-x
+        yrel=h/2-y
+        radius = self.get_radar_pixel_radius(w,h)
+        
+        pixel_distance = math.sqrt((xrel*xrel)+(yrel*yrel))
+        dist = pixel_distance / radius * RADAR_RADIUS_IN_KM
+        
+        head = math.atan(yrel/xrel)
+        
+        coord = Coordinates()
+        coord.set_from_heading_and_distance(self.position, head, dist)
+        return coord
+    
     def draw_coordinate_point(self,cr,radius,coord,maxDist,color):
         #distance to point from centre in drawing coordinates
         drawing_distance = self.position.distance_to(coord)*(radius/maxDist)
@@ -98,14 +150,18 @@ class Radar(gtk.Widget):
             return True
             
         return False
-
+        
+    def get_radar_pixel_radius(self,w,h):
+        return min(w,h)/2 - (ARROW_BORDER_DISTANCE+
+                               ARROW_HEIGHT+
+                               ARROW_RADAR_DISTANCE)
+        
     def do_expose_event(self, event):
         cr = self.window.cairo_create()
 
         x, y, w, h = self.allocation
-        radius = min(w,h)/2 - (ARROW_BORDER_DISTANCE+
-                               ARROW_HEIGHT+
-                               ARROW_RADAR_DISTANCE)
+        radius = self.get_radar_pixel_radius(w,h)
+        
         cr.translate(w/2,h/2)
         
         # background
@@ -134,8 +190,7 @@ class Radar(gtk.Widget):
                     a_arc = math.radians(self.position.relative_heading_to(self.target))            
                     self.draw_arrow(cr,radius,a_arc,HEADING_COLOR);
                 else:
-                   
-                    self.draw_coordinate_point(cr,radius,m.get_value(ic,0),RADAR_RADIUS_IN_KM,(0.5,0.5,0.5))
+                    self.draw_coordinate_point(cr,radius,m.get_value(ic,0),RADAR_RADIUS_IN_KM,WAYPOINT_COLOR)
                 ic = m.iter_next(ic)              
             i = m.iter_next(i);
         

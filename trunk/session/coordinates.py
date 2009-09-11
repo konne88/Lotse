@@ -1,27 +1,72 @@
 #!/usr/bin/env python
 #coding=utf-8
+#http://www.movable-type.co.uk/scripts/latlong.html
 
 from math import *
+
+EARTH_RADIUS =  6371 #in km
 
 class Coordinates(object):
     def __init__(self,lat, lon, alt):
         self.lat = lat
         self.lon = lon
         self.alt = alt
+        
+    def set_from_heading_and_distance(self, coord, head, dist):
+        "set everything with start coordinate, heading and distance"
+        lat1 = radians(coord.lat)
+        lon1 = radians(coord.lon)
+        head = radians(head)
+        sin_dist_earth = sin(dist/EARTH_RADIUS)
+        cos_dist_earth = cos(dist/EARTH_RADIUS)
+        
+        lat2 = asin(sin(lat1)*cos_dist_earth+
+            cos(lat1)*sin_dist_earth*cos(head))
+        lon2 = lon1 + atan2(sin(head)*sin_dist_earth*cos(lat1),
+            cos_dist_earth-sin(lat1)*sin(lat2))
+        lon2 = (lon2+pi)%(2*pi)-pi
+        
+        self.lat = lat2
+        self.lon = lon2
+        self.alt = coord.alt    
+  #var R = 6371; // earth's mean radius in km
+  #var lat1 = this.lat.toRad(), lon1 = this.lon.toRad();
+  #brng = brng.toRad();
+
+  #var lat2 = Math.asin( Math.sin(lat1)*Math.cos(d/R) + 
+                        #Math.cos(lat1)*Math.sin(d/R)*Math.cos(brng) );
+  #var lon2 = lon1 + Math.atan2(Math.sin(brng)*Math.sin(d/R)*Math.cos(lat1), 
+                               #Math.cos(d/R)-Math.sin(lat1)*Math.sin(lat2));
+  #lon2 = (lon2+Math.PI)%(2*Math.PI) - Math.PI;  // normalise to -180...+180
+
+  #if (isNaN(lat2) || isNaN(lon2)) return null;
+  #return new LatLon(lat2.toDeg(), lon2.toDeg());
+
     
     def heading_to(self,coord):
-        y = sin(radians(coord.lon-self.lon)) * cos(radians(coord.lat))
-        x = cos(radians(self.lat)) * sin(radians(coord.lat)) \
-          - sin(radians(self.lat)) * cos(radians(coord.lat)) \
-          * cos(radians(coord.lon-self.lon))
+        lat1 = radians(self.lat)
+        lon1 = radians(self.lon)
+        lat2 = radians(coord.lat)
+        lon2 = radians(coord.lon)
+        
+        y = sin(lon2-lon1) * cos(lat2)
+        x = cos(lat1) * sin(lat2) \
+          - sin(lat1) * cos(lat2) \
+          * cos(lon2-lon1)
         
         return (degrees(atan2(y, x))+360) % 360
+        
+    
 
     def distance_to(self, coord):
-        R = 6371
-        d = acos(sin(radians(self.lat))*sin(radians(coord.lat)) \
-          + cos(radians(self.lat))*cos(radians(coord.lat)) \
-          * cos(radians(coord.lon-self.lon))) * R;
+        lat1 = radians(self.lat)
+        lon1 = radians(self.lon)
+        lat2 = radians(coord.lat)
+        lon2 = radians(coord.lon)
+        
+        d = acos(sin(lat1)*sin(lat2) \
+          + cos(lat1)*cos(lat2) \
+          * cos(lon2-lon1)) * EARTH_RADIUS;
         return d
     
     def strlatlon(self):

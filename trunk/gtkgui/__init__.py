@@ -27,9 +27,7 @@ class LotseWindow(gtk.Window):
        
         self._gotoTab = GotoTab(session)
         self._notebook.append_page(self._gotoTab, gtk.Label('Goto'))
-        
-
-        
+                
         self._waypointTab = WaypointTab(session)
         self._notebook.append_page(self._waypointTab, gtk.Label('Waypoints'))
         
