@@ -75,10 +75,8 @@ class LogTab(gtk.VBox):
 
     def on_start(self, widget, data=None):
         if self._logger != None:
-            self._logger.stop()
-            self._logger = None    
-            
-        if self.create_logger():
+            self._logger.start()            
+        elif self.create_logger():
             self._logger.start()
 
     def on_stop(self, widget, data=None):

@@ -30,8 +30,12 @@ class GotoTab(gtk.VBox):
         
         textbox = gtk.VBox()
         gotobox.pack_start(textbox,False,False,10)
-        self.output_pos = gtk.Label()
+        self.output_pos = gtk.Label()  
         self.output_target = gtk.Label()
+        self.output_pos.set_alignment(xalign=0,yalign=0.5)
+        self.output_target.set_alignment(xalign=0,yalign=0.5)
+        
+        
         textbox.pack_start(self.output_pos)
         textbox.pack_start(self.output_target)
         

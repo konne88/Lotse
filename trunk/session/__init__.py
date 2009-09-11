@@ -22,7 +22,7 @@ class Session(object):
     def __init__(self):
         self._gps = gps.gps()
         self.wpList = gtk.TreeStore(object)
-                
+        
         self.settingsdir = os.path.expanduser("~/.lotse")
         if not os.path.exists(self.settingsdir):
             os.makedirs(self.settingsdir)
@@ -35,11 +35,9 @@ class Session(object):
         
         self.position_changed = Event()
         self.target_changed = Event()
-        self._time = 0
         
         self.update()
         gobject.timeout_add(400, self.update)
-        
     
     def get_sleek_position(self):
         return self._sleek_position
@@ -50,17 +48,7 @@ class Session(object):
         return self._position
     
     position = property(get_position)
-    
-    def get_time(self):
-        return self._time
-        
-    time = property(get_time)
-    
-    def get_fix(self):
-        return self._fix
-        
-    fix = property(get_fix)
-       
+
     def get_target(self):
         return self._target
         
@@ -72,9 +60,9 @@ class Session(object):
 
     def update(self):
         self._gps.query('admosy')
-        if self._time != self._gps.fix.time: 
-            self._time = self._gps.fix.time   
-            self._fix = self._gps.fix.mode     
+        if self._position.time != self._gps.fix.time: 
+            
+            
             
             self._position = Position(
                 self._gps.fix.latitude,
@@ -82,6 +70,10 @@ class Session(object):
                 self._gps.fix.altitude,
                 self._gps.fix.track,
                 self._gps.fix.speed,
+
+                self._gps.fix.time,
+                self._gps.fix.mode,
+                self._gps.satellites
             )
             
             if self._gps.fix.speed<1.0:
@@ -92,15 +84,8 @@ class Session(object):
             if ihead != ihead:  #NaN
                 ihead = 0
             
-            self._sleek_position = Position(
-                self._gps.fix.latitude,
-                self._gps.fix.longitude,
-                self._gps.fix.altitude,
-                ihead,
-                self._gps.fix.speed,
-            )
-            
-            
+            self._sleek_position = self.position
+            self._sleek_position.heading = ihead
             
             self.position_changed()
            

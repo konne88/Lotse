@@ -24,6 +24,10 @@ class Logger(object):
     def flush(self):        
         pass
     
+    def __del__(self):        
+        self.stop()
+        self.flush()
+        
     def get_running(self):
         return self._running
 

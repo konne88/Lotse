@@ -52,15 +52,10 @@ class GPXLogger(Logger):
         self._doc.writexml(file,' ',' ','\n', 'UTF-8')    
         file.close()
         
-    def __del__(self):
-        print self.get_name()+ ' closed'
-        file = open(self._filename, 'w')
-        self._doc.writexml(file,' ',' ','\n', 'UTF-8')    
-
     def get_name(self):
         return 'GPXLogger: '+self._filename
 
-    name  =  property(get_name)             
+    name  =  property(get_name)
 
     def on_position_changed(self):
         #Example
@@ -69,7 +64,7 @@ class GPXLogger(Logger):
         #<time>2008-09-04T19:19:40Z</time>
         #<fix>2d</fix>
         #</trkpt>
-        if self._session.fix>1:
+        if self._session.position.fix>1:
             trkpt_node = easyxml.append_element(self._doc,self._segment_node,'trkpt')
             trkpt_node.setAttribute('lat','%f'%(self._session.sleek_position.lat))
             trkpt_node.setAttribute('lon','%f'%(self._session.sleek_position.lon))
@@ -78,9 +73,9 @@ class GPXLogger(Logger):
                 '%.2f'%(self._session.sleek_position.alt))
 
             easyxml.append_element_with_data(self._doc,trkpt_node,'time',\
-                time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(self._session.time)))
+                time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(self._session.position.time)))
 
-            easyxml.append_element_with_data(self._doc,trkpt_node,'fix','%dd'%(self._session.fix))
+            easyxml.append_element_with_data(self._doc,trkpt_node,'fix','%dd'%(self._session.position.fix))
 
         #print 'Time: '+time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(self._session.time))
 
