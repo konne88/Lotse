@@ -24,7 +24,7 @@ ARROW_BORDER_DISTANCE = 3
 
 RADAR_REQUEST_SIZE = 300
 POINT_RADIUS = 5
-RADAR_RADIUS_IN_KM=10
+RADAR_RADIUS_IN_KM=800.0
 CENTER_POINT_RADIUS = 2
 
 CROSSHAIR_LINE_WIDTH = 1
@@ -39,11 +39,12 @@ class Radar(gtk.Widget):
                      'size-allocate': 'override',
                      'size-request': 'override',}
 
-    def __init__(self,position, target, wpList):
+    def __init__(self,session):
         super(Radar,self).__init__()
-        self._position = position
-        self._target = target
-        self._wpList = wpList
+        self._session = session
+        
+        self._session.position_changed += self._redraw
+        self._session.target_changed += self._redraw
         
         self.connect("button_release_event", self.button_release)
 
@@ -51,6 +52,7 @@ class Radar(gtk.Widget):
         self.add_events(gdk.BUTTON_PRESS_MASK |
                         gdk.BUTTON_RELEASE_MASK |
                         gdk.POINTER_MOTION_MASK)
+                      
 
     def select_as_target(self, widget):
         pass
@@ -59,11 +61,14 @@ class Radar(gtk.Widget):
         wp = Waypoint()
         wp.name = "Unnamed Radarpoint"
         wp.set_coordinates(self.xy_to_coordinates(x,y))
-        self._wpList.append(self._wpList.fromPath("0:0"),(wp,))
+        
+    
+        self._session.wpList.append(self._session.get_manual_list_iter(),(wp,))
+        self._redraw()
 
     def button_release(self, widget, event):
-        print '(%f,%f)'%(event.x , event.y)
-        print event
+        #print '(%f,%f)'%(event.x , event.y)
+        #print event
         
         menu = gtk.Menu()
         
@@ -125,22 +130,23 @@ class Radar(gtk.Widget):
         xleft, ytop, w, h = self.allocation
         xrel=w/2-x
         yrel=h/2-y
-        radius = self.get_radar_pixel_radius(w,h)
-        
+        #if xrel==0 and yrel==0: return self.session.sleek_position
+        radius = self.get_radar_pixel_radius(w,h)        
         pixel_distance = math.sqrt((xrel*xrel)+(yrel*yrel))
-        dist = pixel_distance / radius * RADAR_RADIUS_IN_KM
-        
-        head = math.atan(yrel/xrel)
-        
+        dist = pixel_distance / radius * RADAR_RADIUS_IN_KM        
+        head = math.degrees(math.atan2(xrel,-yrel))+180
+
+        head += self._session.sleek_position.heading
         coord = Coordinates()
-        coord.set_from_heading_and_distance(self.position, head, dist)
+        coord.set_from_heading_and_distance(self._session.sleek_position, head, dist)
         return coord
     
     def draw_coordinate_point(self,cr,radius,coord,maxDist,color):
         #distance to point from centre in drawing coordinates
-        drawing_distance = self.position.distance_to(coord)*(radius/maxDist)
+        scale = (radius/maxDist)
+        drawing_distance = self._session.sleek_position.distance_to(coord)* scale
         if drawing_distance <= radius:
-            alpha = math.radians(self.position.relative_heading_to(coord))
+            alpha = math.radians(self._session.sleek_position.relative_heading_to(coord))
             x = math.sin(alpha)*drawing_distance
             y = -math.cos(alpha)*drawing_distance
             
@@ -180,14 +186,14 @@ class Radar(gtk.Widget):
         cr.stroke()
 
                       
-        m = self._wpList        
+        m = self._session.wpList        
         i = m.get_iter_first()
         while i is not None:
             ic = m.iter_children(i)            
             while ic is not None:
-                if m.get_value(ic,0) == self.target:
-                    self.draw_coordinate_point(cr,radius,self.target,RADAR_RADIUS_IN_KM,HEADING_COLOR)
-                    a_arc = math.radians(self.position.relative_heading_to(self.target))            
+                if m.get_value(ic,0) == self._session.target:
+                    self.draw_coordinate_point(cr,radius,self._session.target,RADAR_RADIUS_IN_KM,HEADING_COLOR)
+                    a_arc = math.radians(self._session.sleek_position.relative_heading_to(self._session.target))            
                     self.draw_arrow(cr,radius,a_arc,HEADING_COLOR);
                 else:
                     self.draw_coordinate_point(cr,radius,m.get_value(ic,0),RADAR_RADIUS_IN_KM,WAYPOINT_COLOR)
@@ -195,7 +201,7 @@ class Radar(gtk.Widget):
             i = m.iter_next(i);
         
         # north arrow
-        a_arc = math.radians(-self.position.heading) 
+        a_arc = math.radians(-self._session.sleek_position.heading) 
         self.draw_arrow(cr,radius,a_arc,NORTH_COLOR)
                 
         # point in the middle
@@ -203,20 +209,7 @@ class Radar(gtk.Widget):
         cr.arc(0, 0, CENTER_POINT_RADIUS , 0, 2 * math.pi) 
         cr.fill()
     
-    def get_target(self):
-        return self._target
-        
-    def set_target(self, value):
-        self._redraw()
-        self._target = value
-        
-    target = property(get_target,set_target)
 
-    def get_position(self):
-        return self._position
 
-    def set_position(self, value):
-        self._redraw()
-        self._position = value
-        
-    position = property(get_position,set_position)
+
+

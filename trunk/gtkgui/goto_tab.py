@@ -25,7 +25,7 @@ class GotoTab(gtk.VBox):
         
         gotobox = gtk.HBox()        
         self.pack_start(gotobox)        
-        self.radar = Radar(session.position, session.target, session.wpList)
+        self.radar = Radar(session)
         gotobox.pack_start(self.radar,True,True)
         
         textbox = gtk.VBox()
@@ -65,9 +65,7 @@ class GotoTab(gtk.VBox):
 
     def on_position_changed(self):
         spos = self._session.sleek_position
-        
-        self.radar.position = spos
-        
+                
         s = 'Your Position\n'
         s += spos.strlatlon()+'\n'
         s += 'Alt: %.0f m\n'%spos.alt
@@ -80,8 +78,6 @@ class GotoTab(gtk.VBox):
         tar = self._session.target 
 
         if tar is not None:
-            self.radar.target = tar
-            
             dist_to_target = spos.distance_to(tar) #in km
             head_to_target = spos.heading_to(tar)
             relative_direction=spos.relative_heading_to(tar)

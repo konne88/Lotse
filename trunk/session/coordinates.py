@@ -7,7 +7,7 @@ from math import *
 EARTH_RADIUS =  6371 #in km
 
 class Coordinates(object):
-    def __init__(self,lat, lon, alt):
+    def __init__(self,lat = 0, lon = 0, alt = 0):
         self.lat = lat
         self.lon = lon
         self.alt = alt
@@ -26,8 +26,9 @@ class Coordinates(object):
             cos_dist_earth-sin(lat1)*sin(lat2))
         lon2 = (lon2+pi)%(2*pi)-pi
         
-        self.lat = lat2
-        self.lon = lon2
+        self.lat = degrees(lat2)
+        self.lon = degrees(lon2)
+        
         self.alt = coord.alt    
   #var R = 6371; // earth's mean radius in km
   #var lat1 = this.lat.toRad(), lon1 = this.lon.toRad();

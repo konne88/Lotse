@@ -76,7 +76,7 @@ class Session(object):
                 self._gps.satellites
             )
             
-            if self._gps.fix.speed<1.0:
+            if self._gps.fix.speed<2.0:
                 ihead=self.sleek_position.heading
             else:
                 ihead=self._gps.fix.track
@@ -90,6 +90,15 @@ class Session(object):
             self.position_changed()
            
         return True
+ 
+    def get_manual_list_iter(self):
+        m = self.wpList 
+        i = m.get_iter_first()
+        while i is not None:
+            if type(m.get_value(i,0)) == Source and m.get_value(i,0)== self.manualSource:
+                return i
+            
+            i = m.iter_next(i);
  
     def foreach_wpListElement_persist(self, model, path, iter,( doc, waypoint_section)):
         curr_object = model.get_value(iter,0)#We only have 1 column

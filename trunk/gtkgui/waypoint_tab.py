@@ -110,21 +110,14 @@ class WaypointTab(gtk.HBox):
             wp.lat=pos.lat
             wp.lon=pos.lon
             wp.alt=pos.alt
-                
-        m = self._session.wpList        
-        i = m.get_iter_first()
-        while i is not None:
-            if type(m.get_value(i,0)) == Source and  m.get_value(i,0)== self._session.manualSource:
-                new_row = m.append(i,(wp,))
-                
-                self._wpListView.expand_row(
-                    m.get_path(i),True)
+            
+        new_row = self._session.wpList.append(self._session.get_manual_list_iter(),(wp,))
+            
+        #self._wpListView.expand_row(m.get_path(i),True)
                     
-                #self._wpListView.grab_focus()
-                break
-            
-            i = m.iter_next(i);
-            
+            #self._wpListView.grab_focus()
+             
+    
     def on_del(self, widget, data=None):
     
         if self._wpListView.get_cursor()is not None:
