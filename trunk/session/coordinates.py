@@ -8,10 +8,46 @@ EARTH_RADIUS =  6371 #in km
 
 class Coordinates(object):
     def __init__(self,lat = 0, lon = 0, alt = 0):
-        self.lat = lat
-        self.lon = lon
+        self._lat = lat
+        self._lon = lon
         self.alt = alt
+        self._strlatlon = ""
+        self._updated()
         
+    def get_lat(self):
+        return self._lat
+    
+    def set_lat(self,val):
+        self._updated()
+        self._lat = val
+        
+    lat = property(get_lat,set_lat)
+        
+    def get_lon(self):
+        return self._lon
+    
+    def set_lon(self,val):
+        self._lon = val
+        self._updated()
+        
+    lon = property(get_lon,set_lon)
+    
+    def _updated(self):
+        s = ""
+        for v,h,f in ((self.lat,('N','S'),True),(self.lon,('E','W'),False)):
+            degreeF = abs(v)
+            degree = int(degreeF)
+            minutesF = (degreeF - degree)*60
+            minutes = int(minutesF)
+            secondsF = (minutesF - minutes)*60
+                        
+            s += '%d°%d\'%.3f" %s'%(degree,minutes,secondsF,h[v<0])
+                        
+            if f:
+                s+=", "
+
+        self._strlatlon = s
+    
     def set_from_heading_and_distance(self, coord, head, dist):
         "set everything with start coordinate, heading and distance"
         lat1 = radians(coord.lat)
@@ -57,8 +93,6 @@ class Coordinates(object):
         
         return (degrees(atan2(y, x))+360) % 360
         
-    
-
     def distance_to(self, coord):
         lat1 = radians(self.lat)
         lon1 = radians(self.lon)
@@ -71,21 +105,7 @@ class Coordinates(object):
         return d
     
     def strlatlon(self):
-        s = ""
-        
-        for v,h,f in ((self.lat,('N','S'),True),(self.lon,('E','W'),False)):
-            degreeF = abs(v)
-            degree = int(degreeF)
-            minutesF = (degreeF - degree)*60
-            minutes = int(minutesF)
-            secondsF = (minutesF - minutes)*60
-                        
-            s += '%d°%d\'%.3f" %s'%(degree,minutes,secondsF,h[v<0])
-                        
-            if f:
-                s+=", "
-
-        return s
+        return self._strlatlon
 
     def parse_string(co):
         lat = 0.0

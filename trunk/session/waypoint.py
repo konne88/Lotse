@@ -9,4 +9,3 @@ class Waypoint(Coordinates):
         self.lat = coord.lat
         self.lon = coord.lon
         self.alt = coord.alt
-    

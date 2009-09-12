@@ -9,23 +9,41 @@ class WaypointTab(gtk.HBox):
     def __init__(self,session):
         super(WaypointTab,self).__init__()
         
+        
         model = session.wpList
         
         self.wpLoader = WaypointLoader(session.wpList)
-        self._wpListView = gtk.TreeView(model)
+        
+        self._listBox = gtk.VBox()
+        self._filterEntry = gtk.Entry()
+        self._filterEntry.connect( 'changed', self.on_filter_edited )
+        self._listBox.pack_start(self._filterEntry,False,False)
+        
+        self.wpListFilter = model.filter_new(root=None)
+        self.wpListFilter.set_visible_func(self.filter_wplist)
+        self._wpListView = gtk.TreeView(self.wpListFilter)
+        
         
         renderer = gtk.CellRendererText()
         renderer.set_property( 'editable', True )
         renderer.connect( 'edited', self.on_name_edited, model )
         column = gtk.TreeViewColumn("Name", renderer)
         column.set_cell_data_func(renderer, self.on_render_name)
+        #column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+        column.set_alignment(0.5)
+        column.resizable = True
+        column.min_width = 50
         self._wpListView.append_column( column )
        
-        renderer = gtk.CellRendererText()
-        renderer.set_property( 'editable', True )
-        renderer.connect( 'edited', self.on_latlon_edited, model )
-        self.latlon_column = gtk.TreeViewColumn("Lat/Lon", renderer)
-        self.latlon_column.set_cell_data_func(renderer, self.on_render_latlon)
+        self.renderer = gtk.CellRendererText()
+        self.renderer.set_property( 'editable', True )
+        self.renderer.connect( 'edited', self.on_latlon_edited, model )
+        self.latlon_column = gtk.TreeViewColumn("Lat/Lon", self.renderer)
+        self.latlon_column.set_cell_data_func(self.renderer, self.on_render_latlon)
+        #self.latlon_column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+        self.latlon_column.set_alignment(0.5)
+        self.latlon_column.min_width = 50
+        self.latlon_column.resizable = True
         self._wpListView.append_column( self.latlon_column )
         
         renderer = gtk.CellRendererText()
@@ -33,7 +51,14 @@ class WaypointTab(gtk.HBox):
         renderer.connect( 'edited', self.on_alt_edited, model )
         column = gtk.TreeViewColumn("Alt", renderer)
         column.set_cell_data_func(renderer, self.on_render_alt)
+     #   column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+        column.set_alignment(1)
+        column.min_width = 50
+        column.resizable = True
         self._wpListView.append_column( column ) 
+                   
+        #self._wpListView.set_fixed_height_mode(True)
+
                    
         bBox= gtk.VButtonBox()
         bBox.set_layout(gtk.BUTTONBOX_START)
@@ -47,9 +72,11 @@ class WaypointTab(gtk.HBox):
         bBox.pack_start(self._import, False,False)
         bBox.pack_start(self._select, False,False)
         
-        scroll = gtk.ScrolledWindow()
-        scroll.add(self._wpListView)
-        self.add(scroll)
+        self._scroll = gtk.ScrolledWindow()
+        self._scroll.add(self._wpListView)
+        self._listBox.pack_start(self._scroll)
+        
+        self.add(self._listBox)
         self.pack_start(bBox,False)
         
         self._add.connect('clicked',self.on_add)
@@ -58,6 +85,20 @@ class WaypointTab(gtk.HBox):
         self._select.connect('clicked',self.on_select)
         
         self._session = session
+    
+    def on_filter_edited(self,widget):
+         self._wpListView.collapse_all()
+         self.wpListFilter.refilter()    
+         self._wpListView.expand_all()
+    
+    def filter_wplist(self,model, iter):
+        wp = model.get_value(iter, 0)
+        if model.iter_has_child(iter) == False:
+            text = self._filterEntry.get_text()            
+            if text != "":
+                return text in wp.name
+                
+        return True
         
     def on_render_name(self, column, cell, model, iter):        
         v = model.get_value(iter, 0)
@@ -110,7 +151,7 @@ class WaypointTab(gtk.HBox):
             wp.lat=pos.lat
             wp.lon=pos.lon
             wp.alt=pos.alt
-            
+        
         new_row = self._session.wpList.append(self._session.get_manual_list_iter(),(wp,))
             
         #self._wpListView.expand_row(m.get_path(i),True)
@@ -120,7 +161,7 @@ class WaypointTab(gtk.HBox):
     
     def on_del(self, widget, data=None):
     
-        if self._wpListView.get_cursor()is not None:
+        if self._wpListView.get_cursor() is not None:
             model=self._wpListView.get_model()
             iter=model.get_iter(self._wpListView.get_cursor()[0])
             value = model.get_value(iter,0)
