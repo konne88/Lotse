@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gpx xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd http://geocaching.com.au/geocache/1 http://geocaching.com.au/geocache/1/geocache.xsd"
+     xmlns="http://www.topografix.com/GPX/1/0"
+     version="1.0"
+     creator="www.opencaching.de">
+  <desc>Geocache</desc>
+  <author>Geocaching Australia</author>
+  <url>http://www.opencaching.de</url>
+  <urlname>www.opencaching.de</urlname>
+  <time>2009-06-03T17:30:04Z</time>
+
+	<wpt lat="48.74227" lon="9.14453">
+	<time>2008-10-12T00:00:00Z</time>
+	<name>OC6ADF</name>
+	<desc>Schwäblesklinge</desc>
+	<src>www.opencaching.de</src>
+	<url>http://www.opencaching.de/viewcache.php?cacheid=130425</url>
+	<urlname>Schwäblesklinge</urlname>
+	<sym>Geocache</sym>
+	<type>Geocache</type>
+	<geocache status="Available" xmlns="http://geocaching.com.au/geocache/1">
+			<name>Schwäblesklinge</name>
+			<owner>niklas2688</owner>
+			<locale></locale>
+			<state>Baden-Württemberg</state>
+			<country>DE</country>
+			<type>Traditional</type>
+			<container>Small</container>
+			<difficulty>1.0</difficulty>
+			<terrain>2.0</terrain>
+			<summary html="false">Kleiner Waldcache an der Schwäblesklinge</summary>
+			<description html="true">&lt;p&gt;An einem ruhigen Ort im Wald findet ihr diesen, meinen ersten, kleinen Cache. Dabei k&amp;ouml;nnt ihr&amp;nbsp; euch noch ein klein wenig Bildung auf dem in der n&amp;auml;he liegenden Geologielehrpfad mitnehmen.&lt;/p&gt;&lt;p&gt;Am leichtesten erreicht ihr den Cacheort von Sonnenberg aus, dann geht es praktisch nur bergab bis kurz vor den Cache selbst kommt ihr auch mit Kinderwagen oder Fahrrad, die letzten 50 m m&amp;uuml;sst ihr dann Querfeldein in den Wald gehen. Der Cache befindet sich S&amp;uuml;dlich eines kleinen T&amp;uuml;mpels dessen Entstehung im Rahmen des Geologielehrpfads Schw&amp;auml;blesklinge beschrieben wird.&lt;/p&gt;&lt;p&gt;Viel Spa&amp;szlig; w&amp;uuml;nscht euch euer Niklas &lt;br /&gt;&lt;/p&gt;</description>
+			<hints>In Baumlöchern in Bodennähe sollst du suchen.</hints>
+			<licence></licence>
+			<logs>
+				
+<log id="472085">
+	<time>2009-05-27T00:00:00Z</time>
+	<geocacher>LomoZiege</geocacher>
+	<type>Found</type>
+	<text>Zusammen mit schreiraupe und Spring-ins-Feld auf Feierabendcachetour gehoben. War problemlos zu finden ... mitten im B&amp;auml;rlauchwald&lt;img src=&quot;lib/tinymce/plugins/emotions/images/smiley-wink.gif&quot; border=&quot;0&quot; alt=&quot;Wink&quot; title=&quot;Wink&quot; /&gt;</text>
+</log>
+
+
+<log id="462346">
+	<time>2009-05-10T00:00:00Z</time>
+	<geocacher>RudolphA</geocacher>
+	<type>Found</type>
+	<text>&lt;p&gt;Ein wunderbarer Ort: Zur Zeit der ganze Wald ein B&amp;auml;rlauch-Meer und vor dem Versteck hat sogar eine Spinne ihr Nest gesponnen. Leider kein Eintrag ins Logbuch m&amp;ouml;glich, da kein Stift dabei und auch keiner im Versteck vorhanden; wird vielleicht nachgeholt.&lt;/p&gt;&lt;p&gt;Vielen Dank&lt;/p&gt;&lt;p&gt;Eintrag ins Logbuch heute nachgeholt.&lt;/p&gt;</text>
+</log>
+
+
+<log id="367639">
+	<time>2008-10-26T00:00:00Z</time>
+	<geocacher>Rambo66</geocacher>
+	<type>Found</type>
+	<text>Wir haben heute unseren 1. Cache gehoben. War gut zu finden und auch noch lehrreich!  :)  </text>
+</log>
+
+
+<log id="362287">
+	<time>2008-10-13T00:00:00Z</time>
+	<geocacher>uwestgt</geocacher>
+	<type>Found</type>
+	<text>&lt;p&gt;Hab&amp;#39;s gefunden! War mein Erster!&lt;/p&gt;&lt;p&gt;&amp;nbsp;Es geht auch gut von Kaltental aus, entweder direkt Richtung Sonnenberg oder erst ein wenig bergauf Richtung Vaihingen.Gutes Schuhwerk ist empfehlenswert.&lt;br /&gt;&lt;/p&gt;</text>
+</log>
+
+
+			</logs>
+		</geocache>
+	</wpt>
+</gpx>
