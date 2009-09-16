@@ -26,6 +26,7 @@ class Position(Coordinates):
     def judge_quality(self):
         "Judge Quality 0.0 to 1.0" 
         if self.fix == 2: return 0.2
-        elif self.fix == 3:
-            return -1.0/(float(self.satellites_used)-1.0)+1.0
+        elif self.fix == 3 and self.satellites_used >= 3:
+            v = -1.0/(float(self.satellites_used)-1.0)+1.0
+            return v
         else: return 0
