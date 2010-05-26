@@ -5,7 +5,7 @@ import string
 import os 
 
 import lib.easyxml as easyxml
-import lib.gps as gps
+import gps, gps.clienthelpers
 from lib.event import Event
 
 from waypoint import Waypoint
@@ -20,7 +20,8 @@ class Source(object):
 
 class Session(object):
     def __init__(self):
-        self._gps = gps.gps()
+        self._gps = gps.gps(mode=gps.WATCH_ENABLE|gps.WATCH_JSON|gps.WATCH_NEWSTYLE)
+
         self.wpList = gtk.TreeStore(object)
         
         self.settingsdir = os.path.expanduser("~/.lotse")
@@ -59,7 +60,8 @@ class Session(object):
     target = property(get_target,set_target)
 
     def update(self):
-        self._gps.query('admosy')
+        report = self._gps.next()
+
         if self._position.time != self._gps.fix.time: 
             
             
