@@ -9,6 +9,5 @@ setup(name='Lotse',
       author_email='niklas@komani.de',
       url='http://github.com/konne88/Lotse',
       packages=['session', 'gtkgui','lib'],
-      scripts=['lotse'],
-      data_files=[('.',['README','INSTALL','COPYING.txt'])]
+      scripts=['lotse']
       )
