@@ -2,7 +2,7 @@
 
 from distutils.core import setup
 
-setup(name='Lotse',
+setup(name='lotse',
       version='0.1',
       description='GPS Geocaching tool',
       author='Konstantin Weitz, Niklas Schnelle',

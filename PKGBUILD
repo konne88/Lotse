@@ -1,13 +1,15 @@
-# Contributor: Niklas Schnelle <niklas@komani.de>
+#Maintainer: Niklas Schnelle <niklas@komani.de>
+#Contributor: Niklas Schnelle <niklas@komani.de>
+#Author: Niklas Schnelle <niklas@komani.de>
 
-pkgname=Lotse
+pkgname=lotse
 pkgver=0.1
 pkgrel=1
 pkgdesc="A small application for geocaching written in Python"
 arch=(any)
 url="http://github.com/konne88/Lotse"
 license=("GPL")
-depends=('python' 'pygtk')
+depends=('python' 'pygtk' 'gpsd>=2.94git20100603-1')
 makedepends=()
 provides=()
 conflicts=()
@@ -15,7 +17,7 @@ replaces=()
 backup=()
 options=(!emptydirs)
 source=(dist/$pkgname-$pkgver.tar.gz)
-md5sums=('9da5fb54954436be69a4a4fa46ce8985')
+md5sums=('ac678301b4bf766739f53b15dab4213a')
 
 build() {
   cd $srcdir/$pkgname-$pkgver 
