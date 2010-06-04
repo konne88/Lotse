@@ -1,2 +1,115 @@
-This is the once to be Readme of Lotse a simple GPS and Geochaching application.
-Have fun Nik
+Introduction
+============
+
+This Application is intended for use as a simple Geocaching tool.
+It has functionality roughly equivalent to a low cost handheld
+GPS receiver. You can use it to find your way towards
+any point given in GPS coordinates or imported from a GPX file.
+This application is not supposed to be used for car navigation,
+as it only tells you the direction in which the target position
+lies relative to your current position and the distance,
+it doesn't take into account any map data.
+
+Installation
+============
+
+For non Arch Linux users:
+Dependencies:
+   python >= 2.6 (3.0 is not backwards compatible so < 3.0)
+   gpsd > 2.94  (version 2.94 has a broken python interface)
+   pygtk >= 2.17.0 (earlier versions might work but haven't been tested)
+   
+Install:
+   run as root: 'python setup.py install'
+   you can use the options listed under 'python setup.py --help install'
+   and 'python setup.py --help'
+   
+For Arch Linux users:
+   Recommended:
+      Get lotse from AUR
+   To build from git:
+   run 'python setup.py sdist'
+   get the md5sum of dist/lotse-*.tar.gz and put it into the PKGBUILD
+   then run 'makepkg -cf' and install 'pacman -U lotse-*.pkg.tar.xz'
+
+How to use it
+=============
+
+First you need to make sure that gpsd is running, this is crucial
+as lotse will only show an error message and quit if gpsd is not
+running on your computer. Refer to 'man gpsd' or other adequate
+documentation on how to get gpsd up and running.
+You should then check whether gpsd is running correctly by issuing
+'xgps' this should give you some info about your GPS, you might
+need to install 'gpsd-clients' depending on your distribution.
+
+AFTER HAVING VERIFIED THAT GPSD WORKS FOR YOU
+
+You can launch lotse from the menu (it should be under 'Accesories')
+or you can run 'lotse' from the command line.
+
+Going to coordinates:
+---------------------
+First, you need to create a waypoint for your target, so go to the
+Waypoint tab.
+If you have a GPX File (for example from your Geocaching Website) you
+can just click on import, choose the file and then select the waypoint
+you want to go to. (You need to highlight it and then click 'select')
+If you have the coordinates for example on paper or as text, copied from
+some place, you need to click 'Add', this will create an 'Unnamed'
+waypoint defaulting to your current position.
+Click on the lat/lon field and enter your coordinates, the way you have 
+written them down, chances are lotse will interpret them correctly.
+Supported formats include (but aren't limited to):
+   48° 45′ 20.6″ N, 9° 11′ 24.8″ E
+   48.755722°, 9.190222°
+Then highlight the waypoint and click 'select' switch to the Goto tab,
+the black arrow points to the target while the red arrow indicates north
+your walking direction is always up on the display.
+Note, that GPS can only calculate your heading 
+(the direction you are walking in, while you are not standing still).
+Tip: If you have a compass you can use the target 'Direction'
+
+Advanced use of the 'Radar'
+---------------------------
+You can left click on the radar for a context menu, with which you
+can create a new waypoint at the location your mouse would be
+when translated to real world coordinates, or select the nearest
+waypoint.
+
+Creating a GPX Log
+------------------ 
+
+
+Hacking
+=======
+
+If you would like to compile the project yourself, here is how to do so using
+the monodevelop ide.
+
+The project comes with files for the mono ide monodevelop. In order to run the
+application, install monodevelop and open the .sln file with it.
+Now activate GtkGui in the Solutions panel and then click the Run button,
+(the gears in the toolbar). If you get some error messages at startup,
+it is likly that some librarys are missing. So go to your packagemanager
+and install the package that is missing. Adding cli or mono to the search makes
+finding the right package more likely.
+
+The git repo
+============
+
+What files will be found in this git repo?
+.cs - Those are the most important, they represent the actual sourcecode of the project
+.txt - Files with information for humans
+
+.sln - Monodevelop file that stores infos about a solution (MyInventory)
+.csproj - Mododevelop file that stores infos about a project (GtkGui,Model, ...)
+.pidb - Are monodevelop internal cached databases for code completion
+.userprefs - Preferences for the monodevelop IDE
+Files found in the Libs project are precompiled and are not very important
+
+Contact
+=======
+
+For bug reports or help requests contact me using the email
+konnew(at)gmx.de
