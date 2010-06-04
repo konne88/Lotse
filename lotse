@@ -1,13 +1,37 @@
 #!/usr/bin/env python
 
+import sys
+import gtk
 import gtkgui
 import session
 #import hildon
 
-if __name__ == "__main__":
+def on_daemon_hangup():
+        w = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
+                              flags=gtk.DIALOG_DESTROY_WITH_PARENT,
+                              buttons=gtk.BUTTONS_CANCEL)
+        w.connect("destroy", lambda w: gtk.main_quit())
+        w.set_markup("gpsd has stopped sending data.")
+        w.run()
+        gtk.main_quit()
+
+def main():
     #   osso_c = osso.Context("osso_test_app", "0.0.1", False)
     #   program  = hildon.Program()
     #   self.window = hildon.Window()
-  
-    ses = session.Session()
+    try: 
+      ses = session.Session()
+    except IOError:
+      md = gtk.MessageDialog(None, 
+         gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, 
+         gtk.BUTTONS_CLOSE, "Could not connect to GPSD, it must be running")
+      md.run()
+      md.destroy()
+      return 42
+
+    ses.hanged_up += on_daemon_hangup
     lotse = gtkgui.LotseWindow(ses)
+    return 0
+if __name__ == "__main__":
+   sys.exit(main())
+
