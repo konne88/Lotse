@@ -162,7 +162,8 @@ class WaypointTab(gtk.HBox):
     def on_del(self, widget, data=None):
     
         if self._wpListView.get_cursor() is not None:
-            model=self._wpListView.get_model()
+            # get the Model inside the ListView, inside the Filter
+            model=self._wpListView.get_model().get_model()
             iter=model.get_iter(self._wpListView.get_cursor()[0])
             value = model.get_value(iter,0)
             
