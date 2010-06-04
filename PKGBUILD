@@ -1,6 +1,8 @@
-# Contributor: Niklas Schnelle <niklas@komani.de>
+#Maintainer: Niklas Schnelle <niklas@komani.de>
+#Contributor: Niklas Schnelle <niklas@komani.de>
+#Author: Niklas Schnelle <niklas@komani.de>
 
-pkgname=Lotse
+pkgname=lotse
 pkgver=0.1
 pkgrel=1
 pkgdesc="A small application for geocaching written in Python"
@@ -15,7 +17,7 @@ replaces=()
 backup=()
 options=(!emptydirs)
 source=(dist/$pkgname-$pkgver.tar.gz)
-md5sums=('6369a909241f9864a592aa7fc60be868')
+md5sums=('ac678301b4bf766739f53b15dab4213a')
 
 build() {
   cd $srcdir/$pkgname-$pkgver 
