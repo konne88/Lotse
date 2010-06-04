@@ -79,37 +79,11 @@ waypoint.
 
 Creating a GPX Log
 ------------------ 
-
-
-Hacking
-=======
-
-If you would like to compile the project yourself, here is how to do so using
-the monodevelop ide.
-
-The project comes with files for the mono ide monodevelop. In order to run the
-application, install monodevelop and open the .sln file with it.
-Now activate GtkGui in the Solutions panel and then click the Run button,
-(the gears in the toolbar). If you get some error messages at startup,
-it is likly that some librarys are missing. So go to your packagemanager
-and install the package that is missing. Adding cli or mono to the search makes
-finding the right package more likely.
-
-The git repo
-============
-
-What files will be found in this git repo?
-.cs - Those are the most important, they represent the actual sourcecode of the project
-.txt - Files with information for humans
-
-.sln - Monodevelop file that stores infos about a solution (MyInventory)
-.csproj - Mododevelop file that stores infos about a project (GtkGui,Model, ...)
-.pidb - Are monodevelop internal cached databases for code completion
-.userprefs - Preferences for the monodevelop IDE
-Files found in the Libs project are precompiled and are not very important
+To create a GPX log you can use the Log tab, remember to
+end the filename with .gpx
 
 Contact
 =======
 
 For bug reports or help requests contact me using the email
-konnew(at)gmx.de
+niklas(_at.)komani.de
