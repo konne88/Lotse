@@ -7,7 +7,7 @@ pkgdesc="A small application for geocaching written in Python"
 arch=(any)
 url="http://github.com/konne88/Lotse"
 license=("GPL")
-depends=('python' 'pygtk')
+depends=('python' 'pygtk' 'gpsd>=2.94git20100603-1')
 makedepends=()
 provides=()
 conflicts=()
@@ -15,7 +15,7 @@ replaces=()
 backup=()
 options=(!emptydirs)
 source=(dist/$pkgname-$pkgver.tar.gz)
-md5sums=('9da5fb54954436be69a4a4fa46ce8985')
+md5sums=('6369a909241f9864a592aa7fc60be868')
 
 build() {
   cd $srcdir/$pkgname-$pkgver 
