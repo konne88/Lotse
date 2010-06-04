@@ -36,6 +36,10 @@ class Coordinates(object):
         s = ""
         for v,h,f in ((self.lat,('N','S'),True),(self.lon,('E','W'),False)):
             degreeF = abs(v)
+            #Check whether degreeF is NaN this can happen when
+            #starting shortly after gpsd
+            if degreeF != degreeF:
+                degreeF = 0.0
             degree = int(degreeF)
             minutesF = (degreeF - degree)*60
             minutes = int(minutesF)
