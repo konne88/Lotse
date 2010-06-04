@@ -1,3 +1,4 @@
+import glib
 import gtk
 import gobject
 import xml.dom.minidom as xml
@@ -24,7 +25,7 @@ class Session(object):
 
         self.wpList = gtk.TreeStore(object)
         
-        self.settingsdir = os.path.expanduser("~/.lotse")
+        self.settingsdir = os.path.join(glib.get_user_config_dir(),"lotse")
         if not os.path.exists(self.settingsdir):
             os.makedirs(self.settingsdir)
 
@@ -36,10 +37,14 @@ class Session(object):
         
         self.position_changed = Event()
         self.target_changed = Event()
+        self.hanged_up = Event()
         
-        self.update()
-        gobject.timeout_add(400, self.update)
-    
+        self.update(None, None)
+        #gobject.timeout_add(400, self.update)
+        gobject.io_add_watch(self._gps.sock, gobject.IO_IN, self.update)
+        gobject.io_add_watch(self._gps.sock, gobject.IO_ERR, self.handle_hangup)
+        gobject.io_add_watch(self._gps.sock, gobject.IO_HUP, self.handle_hangup)
+
     def get_sleek_position(self):
         return self._sleek_position
     
@@ -59,13 +64,14 @@ class Session(object):
         
     target = property(get_target,set_target)
 
-    def update(self):
-        report = self._gps.next()
+    def update(self, source, condition):
+        try:
+            report = self._gps.next()
+        except StopIteration:
+            self.hanged_up()
 
-        if self._position.time != self._gps.fix.time: 
-            
-            
-            
+        if self._position.time != self._gps.fix.time:             
+
             self._position = Position(
                 self._gps.fix.latitude,
                 self._gps.fix.longitude,
@@ -92,14 +98,17 @@ class Session(object):
             self.position_changed()
            
         return True
+
+    def handle_hangup(self, source, condition):
+        self.hanged_up();
+        return True
  
     def get_manual_list_iter(self):
         m = self.wpList 
         i = m.get_iter_first()
         while i is not None:
             if type(m.get_value(i,0)) == Source and m.get_value(i,0)== self.manualSource:
-                return i
-            
+                return i            
             i = m.iter_next(i);
  
     def foreach_wpListElement_persist(self, model, path, iter,( doc, waypoint_section)):
