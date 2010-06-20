@@ -17,8 +17,8 @@ replaces=()
 backup=()
 options=(!emptydirs)
 
-source=(dist/$pkgname-$pkgver.tar.gz)
-md5sums=('b32b75cc032c639347d2ee6c460dc860')
+source=($pkgname-$pkgver.tar.gz)
+md5sums=('494ac29c365bbd702c68cc201b4fec7f')
 
 build() {
   cd $srcdir/$pkgname-$pkgver 
