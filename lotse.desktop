@@ -1,3 +1,4 @@
+
 [Desktop Entry]
 Encoding=UTF-8
 Exec=lotse
@@ -6,4 +7,4 @@ Type=Application
 Categories=GNOME;GTK;Utility;
 Name=lotse
 GenericName=Geocaching Application
-
+Icon=lotse_icon

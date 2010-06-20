@@ -4,7 +4,7 @@ import sys
 import gtk
 import gtkgui
 import session
-#import hildon
+
 
 def on_daemon_hangup():
         w = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
@@ -16,9 +16,7 @@ def on_daemon_hangup():
         gtk.main_quit()
 
 def main():
-    #   osso_c = osso.Context("osso_test_app", "0.0.1", False)
-    #   program  = hildon.Program()
-    #   self.window = hildon.Window()
+
     try: 
       ses = session.Session()
     except IOError:
