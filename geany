@@ -1,8 +1,0 @@
-#!/bin/bash
-geany *.py &
-sleep 1
-geany lib/*.py &
-geany session/*.py &
-geany gtkgui/*.py &
-
-
