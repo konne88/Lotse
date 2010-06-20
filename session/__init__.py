@@ -93,6 +93,7 @@ class Session(object):
             self._position.time = device.fix[2]
 
         self._position.fix = device.fix[0]
+        self._sattelites_used = device.satellites_in_use
         
         if self._position.speed<2.0:
             ihead=self.sleek_position.heading

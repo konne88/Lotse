@@ -9,12 +9,13 @@ class Position(Coordinates):
         self.time = time
         self.fix = fix
         self.satellites = satellites
+        self._sattelites_used = 0
 
     def relative_heading_to(self,coord):
         return self.heading_to(coord) - self.heading
         
     def get_satellites_used(self):
-        return self._gps.satellites_in_use
+        return self._sattelites_used
     
     satellites_used = property(get_satellites_used)
         
