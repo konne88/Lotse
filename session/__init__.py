@@ -22,7 +22,6 @@ class Source(object):
 
 class Session(object):
     def __init__(self):
-        #self._gps = gps.gps(mode=gps.WATCH_ENABLE|gps.WATCH_JSON|gps.WATCH_NEWSTYLE)
         control = location.GPSDControl.get_default()
         self._gps = location.GPSDevice()
         control.set_properties(preferred_method=location.METHOD_USER_SELECTED,
@@ -88,14 +87,13 @@ class Session(object):
             self._position.heading = device.fix[9]
 
         if device.fix[1] & location.GPS_DEVICE_SPEED_SET:
-            self._position.speed = device.fix[11]
+            self._position.speed = device.fix[11]*0.2777 #Liblocation gives it in km/h
 
         if device.fix[1] & location.GPS_DEVICE_TIME_SET:
             self._position.time = device.fix[2]
 
-        self._position.mode = device.fix[0]
-        print device.fix[0]
-
+        self._position.fix = device.fix[0]
+        
         if self._position.speed<2.0:
             ihead=self.sleek_position.heading
         else:

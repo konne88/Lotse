@@ -14,12 +14,7 @@ class Position(Coordinates):
         return self.heading_to(coord) - self.heading
         
     def get_satellites_used(self):
-        c = 0
-        for s in self.satellites:
-            if s.used:
-                c+=1
-                
-        return c
+        return self._gps.satellites_in_use
     
     satellites_used = property(get_satellites_used)
         
