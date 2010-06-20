@@ -1,3 +1,4 @@
 include INSTALL
 include COPYING
 include lotse.desktop
+include icon/lotse_icon.png

@@ -10,5 +10,6 @@ setup(name='lotse',
       url='http://github.com/konne88/Lotse',
       packages=['session', 'gtkgui','lib'],
       scripts=['lotse'],
-      data_files=[('/usr/share/applications', ['lotse.desktop'])]
+      data_files=[('share/applications', ['lotse.desktop']),
+                  ('share/pixmaps', ['icon/lotse_icon.png'])]
       )
